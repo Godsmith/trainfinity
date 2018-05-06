@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="//cdn.jsdelivr.net/npm/phaser@3.6.1/dist/phaser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5.1/dat.gui.js"></script>
+</head>
+<body>
+
+<script>
+  WIDTH = 800;
+  HEIGHT = 640;
+  TILESIZE = 32;
+  GRID = {};
+
+  var config = {
+  type: Phaser.AUTO,
+  width: WIDTH,
+  height: HEIGHT,
+  disableContextMenu: true,
+  scene: {
+    initialize: initialize,
+    preload: preload,
+    create: create,
+    update: update
+  }
+  };
+
+  var game = new Phaser.Game(config);
+
+  function initialize()
+  {
+  }
+
+  function preload ()
+  {
+    this.load.image('rail', 'assets/rail.png');
+    this.load.image('railturn', 'assets/railturn.png');
+    this.load.image('halfrail', 'assets/halfrail.png');
+  }
+
+  function create ()
+  {
+    // To add a static sprite for GUI, use this.add.image(...).setScrollFactor(0)
+
+    this.cameras.main.setBounds(-200, -200, 1000, 1000);
+    this.draggingCamera = false;
+
+    this.input.on('pointerdown', function (pointer) {
+      if (pointer.buttons == 1) {
+        x = Math.round((pointer.x + this.cameras.main.scrollX)/TILESIZE) * TILESIZE;
+        y = Math.round((pointer.y + this.cameras.main.scrollY)/TILESIZE) * TILESIZE;
+        gridName = "x" + x + "y" + y;
+        GRID[gridName] = {name: gridName};
+        this.add.image(x, y, 'rail');
+      } else if (pointer.buttons == 2) {
+        this.lastPointerX = pointer.x;
+        this.lastPointerY = pointer.y;
+        this.draggingCamera = true;
+      }
+
+    }, this);
+
+    this.input.on('pointerup', function (pointer) {
+      if (pointer.buttons == 2) {
+        this.draggingCamera = false;
+      }
+    }, this);
+
+    this.input.on('pointermove', function (pointer) {
+      if (this.draggingCamera) {
+        this.cameras.main.scrollX -= pointer.x - this.lastPointerX;
+        this.cameras.main.scrollY -= pointer.y - this.lastPointerY;
+        this.lastPointerX = pointer.x;
+        this.lastPointerY = pointer.y
+      }
+    }, this);
+
+    gui = new dat.GUI();
+    cam = this.cameras.main;
+
+    var f1 = gui.addFolder('Camera');
+    f1.add(cam, 'x').listen();
+    f1.add(cam, 'y').listen();
+    f1.add(cam, 'scrollX').listen();
+    f1.add(cam, 'scrollY').listen();
+    f1.add(cam, 'rotation').min(0).step(0.01).listen();
+    f1.open();
+  }
+
+  function update ()
+  {
+  }
+</script>
+
+</body>
+</html>
