@@ -54,16 +54,14 @@
 
     this.cameras.main.setBounds(-200, -200, 1000, 1000);
     this.draggingCamera = false;
-    this.buildingRail = false;
+    this.railBuilder = new RailBuilder();
     this.railBuildingPositions = [];
     this.temporaryRailImages = [];
 
     this.input.on('pointerdown', function (pointer) {
       if (pointer.buttons == 1) {
         let coordinates = new Coordinates(pointer, this.cameras.main);
-        this.railBuildingStartX = coordinates.x;
-        this.railBuildingStartY = coordinates.y;
-        this.buildingRail = true
+        this.railBuilder.pointerDown(coordinates)
       } else if (pointer.buttons == 2) {
         this.lastPointerX = pointer.x;
         this.lastPointerY = pointer.y;
@@ -73,23 +71,12 @@
     }, this);
 
     this.input.on('pointerup', function (pointer) {
-      if (this.buildingRail) {
-
-      }
-      this.buildingRail = false;
+      this.railBuilder.pointerUp();
       this.draggingCamera = false;
     }, this);
 
     this.input.on('pointermove', function (pointer) {
-      if (this.buildingRail) {
-        let coordinates = new Coordinates(pointer, this.cameras.main);
-        let gridName = "x" + coordinates.x + "y" + coordinates.y;
-        if (!this.railBuildingPositions.includes(gridName)) {
-          this.add.image(coordinates.x, coordinates.y, 'halfrail');
-        }
-        //GRID[gridName] = {name: gridName};
-        //this.add.image(x, y, 'halfrail');
-      }
+      this.railBuilder.pointerMove(new Coordinates(pointer, this.cameras.main), this);
       if (this.draggingCamera) {
         this.cameras.main.scrollX -= pointer.x - this.lastPointerX;
         this.cameras.main.scrollY -= pointer.y - this.lastPointerY;
