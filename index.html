@@ -76,7 +76,7 @@
     }, this);
 
     this.input.on('pointermove', function (pointer) {
-      this.railBuilder.pointerMove(new Coordinates(pointer, this.cameras.main), this);
+      this.railBuilder.pointerMove(new Coordinates(pointer, this.cameras.main), this, TILESIZE);
       if (this.draggingCamera) {
         this.cameras.main.scrollX -= pointer.x - this.lastPointerX;
         this.cameras.main.scrollY -= pointer.y - this.lastPointerY;
@@ -97,7 +97,7 @@
     f1.open();
     let f2 = gui.addFolder('Other');
     f2.add(this, 'draggingCamera').listen();
-    f2.add(this, 'buildingRail').listen();
+    f2.add(this.railBuilder, 'building').listen();
     f2.open();
   }
 
