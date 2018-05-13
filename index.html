@@ -3,16 +3,19 @@
 <head>
   <script src="//cdn.jsdelivr.net/npm/phaser@3.6.1/dist/phaser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5.1/dat.gui.js"></script>
+  <script src="RailBuilder.js" type="module"></script>
 </head>
 <body>
 
-<script>
-  WIDTH = 800;
-  HEIGHT = 640;
-  TILESIZE = 32;
-  GRID = {};
+<script type="module">
+  import  { RailBuilder }  from "./RailBuilder.js";
 
-  var config = {
+  let WIDTH = 800;
+  let HEIGHT = 640;
+  let TILESIZE = 32;
+  let GRID = {};
+
+  let config = {
   type: Phaser.AUTO,
   width: WIDTH,
   height: HEIGHT,
@@ -38,20 +41,29 @@
     this.load.image('halfrail', 'assets/halfrail.png');
   }
 
+  class Coordinates {
+    constructor(pointer, camera) {
+      this.x = Math.round((pointer.x + camera.scrollX)/TILESIZE) * TILESIZE;
+      this.y = Math.round((pointer.y + camera.scrollY)/TILESIZE) * TILESIZE;
+    }
+  }
+
   function create ()
   {
     // To add a static sprite for GUI, use this.add.image(...).setScrollFactor(0)
 
     this.cameras.main.setBounds(-200, -200, 1000, 1000);
     this.draggingCamera = false;
+    this.buildingRail = false;
+    this.railBuildingPositions = [];
+    this.temporaryRailImages = [];
 
     this.input.on('pointerdown', function (pointer) {
       if (pointer.buttons == 1) {
-        x = Math.round((pointer.x + this.cameras.main.scrollX)/TILESIZE) * TILESIZE;
-        y = Math.round((pointer.y + this.cameras.main.scrollY)/TILESIZE) * TILESIZE;
-        gridName = "x" + x + "y" + y;
-        GRID[gridName] = {name: gridName};
-        this.add.image(x, y, 'rail');
+        let coordinates = new Coordinates(pointer, this.cameras.main);
+        this.railBuildingStartX = coordinates.x;
+        this.railBuildingStartY = coordinates.y;
+        this.buildingRail = true
       } else if (pointer.buttons == 2) {
         this.lastPointerX = pointer.x;
         this.lastPointerY = pointer.y;
@@ -61,12 +73,23 @@
     }, this);
 
     this.input.on('pointerup', function (pointer) {
-      if (pointer.buttons == 2) {
-        this.draggingCamera = false;
+      if (this.buildingRail) {
+
       }
+      this.buildingRail = false;
+      this.draggingCamera = false;
     }, this);
 
     this.input.on('pointermove', function (pointer) {
+      if (this.buildingRail) {
+        let coordinates = new Coordinates(pointer, this.cameras.main);
+        let gridName = "x" + coordinates.x + "y" + coordinates.y;
+        if (!this.railBuildingPositions.includes(gridName)) {
+          this.add.image(coordinates.x, coordinates.y, 'halfrail');
+        }
+        //GRID[gridName] = {name: gridName};
+        //this.add.image(x, y, 'halfrail');
+      }
       if (this.draggingCamera) {
         this.cameras.main.scrollX -= pointer.x - this.lastPointerX;
         this.cameras.main.scrollY -= pointer.y - this.lastPointerY;
@@ -75,16 +98,20 @@
       }
     }, this);
 
-    gui = new dat.GUI();
-    cam = this.cameras.main;
+    let gui = new dat.GUI();
+    let cam = this.cameras.main;
 
-    var f1 = gui.addFolder('Camera');
+    let f1 = gui.addFolder('Camera');
     f1.add(cam, 'x').listen();
     f1.add(cam, 'y').listen();
     f1.add(cam, 'scrollX').listen();
     f1.add(cam, 'scrollY').listen();
     f1.add(cam, 'rotation').min(0).step(0.01).listen();
     f1.open();
+    let f2 = gui.addFolder('Other');
+    f2.add(this, 'draggingCamera').listen();
+    f2.add(this, 'buildingRail').listen();
+    f2.open();
   }
 
   function update ()
