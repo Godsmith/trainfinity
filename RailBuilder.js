@@ -31,9 +31,9 @@ class RailBuilder {
       for (let x = this.startX; x != coordinate.x; x += step) {
         coordinates.push({x: x, y: this.startY})
       }
+      // The for loop stops before adding the final coordinate, so add it here
+      coordinates.push({x: coordinate.x, y: coordinate.y});
     }
-    // The for loop stops before adding the final coordinate, so add it here
-    coordinates.push({x: coordinate.x, y: coordinate.y});
     return coordinates;
   }
 
