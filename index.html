@@ -54,7 +54,8 @@
 
     this.cameras.main.setBounds(-200, -200, 1000, 1000);
     this.draggingCamera = false;
-    this.railBuilder = new RailBuilder();
+    this.grid = {};
+    this.railBuilder = new RailBuilder(this.grid);
     this.railBuildingPositions = [];
     this.temporaryRailImages = [];
 
