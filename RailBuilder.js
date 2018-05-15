@@ -34,6 +34,14 @@ class RailBuilder {
       // The for loop stops before adding the final coordinate, so add it here
       coordinates.push({x: coordinate.x, y: coordinate.y});
     }
+    if (coordinate.x === this.startX) {
+      let step = coordinate.y > this.startY ? tilesize : -tilesize;
+      for (let y = this.startY; y != coordinate.y; y += step) {
+        coordinates.push({x: this.startX, y: y})
+      }
+      // The for loop stops before adding the final coordinate, so add it here
+      coordinates.push({x: coordinate.x, y: coordinate.y});
+    }
     return coordinates;
   }
 
