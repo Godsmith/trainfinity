@@ -1,9 +1,9 @@
 /**
  * Created by Filip on 2018-05-08.
  */
+import { RailSegmentFactory } from "./RailSegment.js";
 
 const listCoordinatesFromStartTo = Symbol('listCoordinatesFromStartTo');
-const downwardsOrLeftwards = Symbol('downwardsOrLeftwards');
 
 class RailBuilder {
   constructor(grid) {
@@ -60,21 +60,12 @@ class RailBuilder {
       if (this.coordinateList.length < 2) {
         return;
       }
-      for (var coordinate of this.coordinateList) {
-        let imageFileName = 'halfrail';
-        let angle = horizontal ? 90 : 0;
-        if (this[downwardsOrLeftwards](this.coordinateList)) {
-          angle += 180;
-        }
-        if (coordinate === this.coordinateList[0]) {
-          // Do nothing
-        } else if (coordinate === this.coordinateList[this.coordinateList.length - 1]) {
-          angle += 180
-        } else {
-          imageFileName = 'rail';
-        }
-        let image = game.add.image(coordinate.x, coordinate.y, imageFileName);
-        image.angle = angle;
+      let railSegments = (new RailSegmentFactory()).fromCoordinateList(this.coordinateList);
+      for (let i = 0; i < railSegments.length; i++) {
+        let coordinate = this.coordinateList[i];
+        let railSegment = railSegments[i];
+        let image = game.add.image(coordinate.x, coordinate.y, railSegment.imageName);
+        image.angle = railSegment.angle;
         this.images.push(image)
       }
       // let gridName = "x" + coordinates.x + "y" + coordinates.y;
@@ -87,14 +78,6 @@ class RailBuilder {
     }
   }
 
-  [downwardsOrLeftwards] (coordinateList) {
-    if (coordinateList.length < 2) {
-      return false;
-    }
-    let first = coordinateList[0];
-    let last = coordinateList[coordinateList.length - 1];
-    return (first.x > last.x) || (first.y < last.y)
-  }
 }
 
 export {RailBuilder};
