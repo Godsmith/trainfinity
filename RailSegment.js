@@ -60,23 +60,28 @@ class RailSegmentFactory {
 
   fromCoordinateList(coordinateList) {
     let horizontal = (coordinateList[0].y === coordinateList[coordinateList.length - 1].y);
-    let railSegments = [];
+    let classes = {};
     if (horizontal) {
-      railSegments.push(new ERailSegment());
-      for (let i = 0; i < coordinateList.length - 2; i++) {
-        railSegments.push(new WERailSegment());
-      }
-      railSegments.push(new WRailSegment())
+      classes.first = ERailSegment;
+      classes.middle = WERailSegment;
+      classes.last = WRailSegment;
     } else {
-      railSegments.push(new NRailSegment());
-      for (let i = 0; i < coordinateList.length - 2; i++) {
-        railSegments.push(new NSRailSegment());
-      }
-      railSegments.push(new SRailSegment())
+      classes.first = NRailSegment;
+      classes.middle = NSRailSegment;
+      classes.last = SRailSegment;
     }
+
+    let railSegments = [];
+    railSegments.push(new classes.first());
+    for (let i = 0; i < coordinateList.length - 2; i++) {
+      railSegments.push(new classes.middle());
+    }
+    railSegments.push(new classes.last());
+    
     if (this[downwardsOrLeftwards](coordinateList)) {
       railSegments.reverse()
     }
+
     return railSegments;
   }
 
