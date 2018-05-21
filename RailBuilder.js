@@ -10,6 +10,9 @@ class RailBuilder {
     this.grid = grid;
     this.building = false;
     this.images = [];
+    this.coordinateList = [];
+    this.railSegments = [];
+    this.allowBuilding = true;
   }
 
   pointerDown(coordinates) {
@@ -21,8 +24,19 @@ class RailBuilder {
   pointerUp() {
     if (this.building) {
       this.building = false;
+      if (this.allowBuilding) {
+        for (let i = 0; i < this.coordinateList.length; i++) {
+          let coordinate = this.coordinateList[i];
+          this.grid['x' + coordinate.x + 'y' + coordinate.y] = this.railSegments[i]
+        }
+      } else {
+        for (var image of this.images) {
+          image.destroy()
+        }
+      }
       this.images = [];
     }
+    console.log(this.grid)
   }
 
   [listCoordinatesFromStartTo] (coordinate, tilesize) {
@@ -50,22 +64,31 @@ class RailBuilder {
   }
 
   pointerMove(coordinates, game, TILESIZE) {
-    let horizontal = (coordinates.y === this.startY);
     if (this.building) {
       for (var image of this.images) {
         image.destroy()
       }
       this.images = [];
+      this.allowBuilding = true;
+
       this.coordinateList = this[listCoordinatesFromStartTo](coordinates, TILESIZE);
       if (this.coordinateList.length < 2) {
         return;
       }
-      let railSegments = (new RailSegmentFactory()).fromCoordinateList(this.coordinateList);
-      for (let i = 0; i < railSegments.length; i++) {
+      this.railSegments = (new RailSegmentFactory()).fromCoordinateList(this.coordinateList);
+      for (let i = 0; i < this.railSegments.length; i++) {
         let coordinate = this.coordinateList[i];
-        let railSegment = railSegments[i];
+        let railSegment = this.railSegments[i];
+
+        let tint = 0xFFFFFF;
+        let existingRailSegment = this.grid['x' + coordinate.x + 'y' + coordinate.y];
+        if (existingRailSegment) {
+          tint = existingRailSegment ? 0xFF0000 : 0xFFFFFF;
+          this.allowBuilding = false;
+        }
         let image = game.add.image(coordinate.x, coordinate.y, railSegment.imageName);
         image.angle = railSegment.angle;
+        image.tint = tint;
         this.images.push(image)
       }
       // let gridName = "x" + coordinates.x + "y" + coordinates.y;

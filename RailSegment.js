@@ -77,7 +77,7 @@ class RailSegmentFactory {
       railSegments.push(new classes.middle());
     }
     railSegments.push(new classes.last());
-    
+
     if (this[downwardsOrLeftwards](coordinateList)) {
       railSegments.reverse()
     }
