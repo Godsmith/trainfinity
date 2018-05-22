@@ -1,7 +1,7 @@
 /**
  * Created by Filip on 2018-05-08.
  */
-import { RailSegmentFactory } from "./RailSegment.js";
+import {RailSegmentFactory} from "./RailSegment.js";
 
 const listCoordinatesFromStartTo = Symbol('listCoordinatesFromStartTo');
 
@@ -35,11 +35,11 @@ class RailBuilder {
         }
       }
       this.images = [];
+      console.log(this.grid)
     }
-    console.log(this.grid)
   }
 
-  [listCoordinatesFromStartTo] (coordinate, tilesize) {
+  [listCoordinatesFromStartTo](coordinate, tilesize) {
     let coordinates = [];
     if (coordinate.y === this.startY) {
       if (coordinate.x === this.startX) {
@@ -69,25 +69,26 @@ class RailBuilder {
         image.destroy()
       }
       this.images = [];
-      this.allowBuilding = true;
 
       this.coordinateList = this[listCoordinatesFromStartTo](coordinates, TILESIZE);
       if (this.coordinateList.length < 2) {
+        this.allowBuilding = false;
         return;
       }
+      this.allowBuilding = true;
       this.railSegments = (new RailSegmentFactory()).fromCoordinateList(this.coordinateList);
       for (let i = 0; i < this.railSegments.length; i++) {
         let coordinate = this.coordinateList[i];
-        let railSegment = this.railSegments[i];
-
         let tint = 0xFFFFFF;
         let existingRailSegment = this.grid['x' + coordinate.x + 'y' + coordinate.y];
-        if (existingRailSegment) {
+        if (this.railSegments[i].canBuildOn(existingRailSegment)) {
+          this.railSegments[i] = this.railSegments[i].combine(existingRailSegment);
+        } else {
           tint = existingRailSegment ? 0xFF0000 : 0xFFFFFF;
           this.allowBuilding = false;
         }
-        let image = game.add.image(coordinate.x, coordinate.y, railSegment.imageName);
-        image.angle = railSegment.angle;
+        let image = game.add.image(coordinate.x, coordinate.y, this.railSegments[i].imageName);
+        image.angle = this.railSegments[i].angle;
         image.tint = tint;
         this.images.push(image)
       }

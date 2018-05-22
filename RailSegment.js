@@ -8,6 +8,23 @@ class RailSegment {
   constructor() {
     this.imageName = 'RailSegment image name';
     this.angle = 0;
+    this.possibleCombinations = {};
+  }
+
+  canBuildOn(railSegment) {
+    if (!railSegment) {
+      return true;
+    }
+    console.log(this.constructor.name + " can build on " + railSegment.constructor.name + ": " + (railSegment.constructor.name in this.possibleCombinations).toString());
+    return railSegment.constructor.name in this.possibleCombinations;
+  }
+
+  combine(railSegment) {
+    if (!railSegment) {
+      return this;
+    }
+    let railSegmentClass = this.possibleCombinations[railSegment.constructor.name];
+    return new railSegmentClass;
   }
 }
 
@@ -16,6 +33,11 @@ class NRailSegment extends RailSegment {
     super();
     this.imageName = 'halfrail';
     this.angle = 0;
+    this.possibleCombinations = {
+      ERailSegment: NERailSegment,
+      WRailSegment: NWRailSegment,
+      SRailSegment: NSRailSegment
+    }
   }
 }
 class ERailSegment extends RailSegment {
@@ -23,6 +45,11 @@ class ERailSegment extends RailSegment {
     super();
     this.imageName = 'halfrail';
     this.angle = 90;
+    this.possibleCombinations = {
+      NRailSegment: NERailSegment,
+      SRailSegment: SERailSegment,
+      WRailSegment: WERailSegment
+    }
   }
 }
 class SRailSegment extends RailSegment {
@@ -30,6 +57,11 @@ class SRailSegment extends RailSegment {
     super();
     this.imageName = 'halfrail';
     this.angle = 180;
+    this.possibleCombinations = {
+      ERailSegment: SERailSegment,
+      WRailSegment: SWRailSegment,
+      NRailSegment: NSRailSegment
+    }
   }
 }
 class WRailSegment extends RailSegment {
@@ -37,6 +69,11 @@ class WRailSegment extends RailSegment {
     super();
     this.imageName = 'halfrail';
     this.angle = 270;
+    this.possibleCombinations = {
+      NRailSegment: NWRailSegment,
+      SRailSegment: SWRailSegment,
+      ERailSegment: WERailSegment
+    }
   }
 }
 
@@ -53,6 +90,38 @@ class WERailSegment extends RailSegment {
     super();
     this.imageName = 'rail';
     this.angle = 90;
+  }
+}
+
+class NERailSegment extends RailSegment {
+  constructor() {
+    super();
+    this.imageName = 'railturn';
+    this.angle = 0;
+  }
+}
+
+class SERailSegment extends RailSegment {
+  constructor() {
+    super();
+    this.imageName = 'railturn';
+    this.angle = 90;
+  }
+}
+
+class SWRailSegment extends RailSegment {
+  constructor() {
+    super();
+    this.imageName = 'railturn';
+    this.angle = 180;
+  }
+}
+
+class NWRailSegment extends RailSegment {
+  constructor() {
+    super();
+    this.imageName = 'railturn';
+    this.angle = 270;
   }
 }
 
