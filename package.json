@@ -1,0 +1,23 @@
+{
+  "name": "trainfinity",
+  "description": "Trainfinity",
+  "version": "0.1.0",
+  "main": "RailBuilder.js",
+  "dependencies": {
+    "jest": "^23.4.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Godsmith/trainfinity.git"
+  },
+  "author": "Filip Lange",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Godsmith/trainfinity/issues"
+  },
+  "homepage": "https://github.com/Godsmith/trainfinity#readme",
+  "scripts": {
+    "test": "jest"
+  }
+}
