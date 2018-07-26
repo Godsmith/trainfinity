@@ -2,6 +2,7 @@
  * Created by Filip on 2018-05-08.
  */
 import {RailSegmentFactory} from "./RailSegment.js";
+import {Image} from "./Image.js";
 
 const listCoordinatesFromStartTo = Symbol('listCoordinatesFromStartTo');
 
@@ -9,7 +10,6 @@ class RailBuilder {
   constructor(grid) {
     this.grid = grid;
     this.building = false;
-    this.images = [];
     this.coordinateList = [];
     this.railSegments = [];
     this.allowBuilding = true;
@@ -29,14 +29,10 @@ class RailBuilder {
           let coordinate = this.coordinateList[i];
           this.grid['x' + coordinate.x + 'y' + coordinate.y] = this.railSegments[i]
         }
-      } else {
-        for (var image of this.images) {
-          image.destroy()
-        }
+        return true;
       }
-      this.images = [];
-      console.log(this.grid)
     }
+    return false;
   }
 
   [listCoordinatesFromStartTo](coordinate, tilesize) {
@@ -63,12 +59,9 @@ class RailBuilder {
     return coordinates;
   }
 
-  pointerMove(coordinates, game, TILESIZE) {
+  pointerMove(coordinates, TILESIZE) {
     if (this.building) {
-      for (var image of this.images) {
-        image.destroy()
-      }
-      this.images = [];
+      let images = [];
 
       this.coordinateList = this[listCoordinatesFromStartTo](coordinates, TILESIZE);
       if (this.coordinateList.length < 2) {
@@ -87,18 +80,10 @@ class RailBuilder {
           tint = existingRailSegment ? 0xFF0000 : 0xFFFFFF;
           this.allowBuilding = false;
         }
-        let image = game.add.image(coordinate.x, coordinate.y, this.railSegments[i].imageName);
-        image.angle = this.railSegments[i].angle;
-        image.tint = tint;
-        this.images.push(image)
+        images.push(new Image(coordinate.x, coordinate.y, this.railSegments[i].imageName,
+          this.railSegments[i].angle, tint))
       }
-      // let gridName = "x" + coordinates.x + "y" + coordinates.y;
-      // if (!this.positions.includes(gridName)) {
-      //   let image = game.add.image(coordinates.x, coordinates.y, 'halfrail');
-      //   this.images.push(image)
-      // }
-      //GRID[gridName] = {name: gridName};
-      //this.add.image(x, y, 'halfrail');
+      return images;
     }
   }
 
