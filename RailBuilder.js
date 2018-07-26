@@ -21,7 +21,12 @@ class RailBuilder {
     this.building = true
   }
 
+  /**
+   * Called when the mouse pointer is released and returns whether the build was legal or not
+   * @returns {boolean} true if rail has been built, false otherwise
+   */
   pointerUp() {
+    // TODO: rename to buildingAllowed or something. But has side effects, so perhaps not.
     if (this.building) {
       this.building = false;
       if (this.allowBuilding) {
@@ -59,6 +64,12 @@ class RailBuilder {
     return coordinates;
   }
 
+  /**
+   * Called each time the pointer moves and returns the rail Image objects created
+   * @param coordinates an object with an x and y value representing the current location of the cursor
+   * @param TILESIZE the size in pixels of each tile.
+   * @returns {Array} an array of Image objects representing rail pieces.
+   */
   pointerMove(coordinates, TILESIZE) {
     if (this.building) {
       let images = [];
