@@ -164,4 +164,7 @@ class RailSegmentFactory {
   }
 }
 
-export {RailSegmentFactory};
+export {
+  RailSegmentFactory, WRailSegment, ERailSegment, WERailSegment,
+  SRailSegment, NRailSegment, NSRailSegment
+};
