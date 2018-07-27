@@ -15,7 +15,6 @@ class RailSegment {
     if (!railSegment) {
       return true;
     }
-    console.log(this.constructor.name + " can build on " + railSegment.constructor.name + ": " + (railSegment.constructor.name in this.possibleCombinations).toString());
     return railSegment.constructor.name in this.possibleCombinations;
   }
 

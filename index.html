@@ -52,7 +52,7 @@
     this.cameras.main.setBounds(-200, -200, 1000, 1000);
     this.draggingCamera = false;
     this.grid = {};
-    this.railBuilder = new RailBuilder(this.grid);
+    this.railBuilder = new RailBuilder(this.grid, TILESIZE);
     this.railBuildingPositions = [];
     this.temporaryRailImages = [];
 
@@ -69,7 +69,6 @@
     }, this);
 
     this.input.on('pointerup', function (pointer) {
-      console.log('pointerup');
       let successful = this.railBuilder.pointerUp();
       if (successful) {
         // Clear the array so that the images will not be destroyed
@@ -79,14 +78,13 @@
     }, this);
 
     this.input.on('pointermove', function (pointer) {
-      console.log('pointermove');
       // pointermove is called after pointerup when the mouse cursor is released,
       // so this will remove the temporary rail images unless the array is cleared
       // by a successful build action.
       for (var image of this.temporaryRailImages) {
         image.destroy()
       }
-      let images = this.railBuilder.pointerMove(new Coordinates(pointer, this.cameras.main), this, TILESIZE);
+      let images = this.railBuilder.pointerMove(new Coordinates(pointer, this.cameras.main), this);
       if (images) {
         for (let image of images) {
           let railImage = this.add.image(image.x, image.y, image.name);

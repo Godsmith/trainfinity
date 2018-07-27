@@ -7,8 +7,9 @@ import {Image} from "./Image.js";
 const listCoordinatesFromStartTo = Symbol('listCoordinatesFromStartTo');
 
 class RailBuilder {
-  constructor(grid) {
+  constructor(grid, tileSize) {
     this.grid = grid;
+    this.tileSize = tileSize;
     this.building = false;
     this.coordinateList = [];
     this.railSegments = [];
@@ -22,7 +23,8 @@ class RailBuilder {
   }
 
   /**
-   * Called when the mouse pointer is released and returns whether the build was legal or not
+   * Called when the mouse pointer is released.
+   * Updates the internal grid with the new rail segments
    * @returns {boolean} true if rail has been built, false otherwise
    */
   pointerUp() {
@@ -67,14 +69,13 @@ class RailBuilder {
   /**
    * Called each time the pointer moves and returns the rail Image objects created
    * @param coordinates an object with an x and y value representing the current location of the cursor
-   * @param TILESIZE the size in pixels of each tile.
    * @returns {Array} an array of Image objects representing rail pieces.
    */
-  pointerMove(coordinates, TILESIZE) {
+  pointerMove(coordinates) {
     if (this.building) {
       let images = [];
 
-      this.coordinateList = this[listCoordinatesFromStartTo](coordinates, TILESIZE);
+      this.coordinateList = this[listCoordinatesFromStartTo](coordinates, this.tileSize);
       if (this.coordinateList.length < 2) {
         this.allowBuilding = false;
         return;
