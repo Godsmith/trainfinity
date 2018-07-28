@@ -12,10 +12,11 @@ class RailSegment {
   }
 
   canBuildOn(railSegment) {
-    if (!railSegment) {
+    if (railSegment) {
+      return railSegment.constructor.name in this.possibleCombinations;
+    } else {
       return true;
     }
-    return railSegment.constructor.name in this.possibleCombinations;
   }
 
   combine(railSegment) {
@@ -154,9 +155,6 @@ class RailSegmentFactory {
   }
 
   [downwardsOrLeftwards](coordinateList) {
-    if (coordinateList.length < 2) {
-      return false;
-    }
     let first = coordinateList[0];
     let last = coordinateList[coordinateList.length - 1];
     return (first.x > last.x) || (first.y < last.y)
@@ -165,5 +163,5 @@ class RailSegmentFactory {
 
 export {
   RailSegmentFactory, WRailSegment, ERailSegment, WERailSegment,
-  SRailSegment, NRailSegment, NSRailSegment
+  SRailSegment, NRailSegment, NSRailSegment, SERailSegment, NERailSegment, SWRailSegment, NWRailSegment
 };

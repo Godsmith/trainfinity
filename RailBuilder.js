@@ -29,15 +29,13 @@ class RailBuilder {
    */
   pointerUp() {
     // TODO: rename to buildingAllowed or something. But has side effects, so perhaps not.
-    if (this.building) {
-      this.building = false;
-      if (this.allowBuilding) {
-        for (let i = 0; i < this.coordinateList.length; i++) {
-          let coordinate = this.coordinateList[i];
-          this.grid['x' + coordinate.x + 'y' + coordinate.y] = this.railSegments[i]
-        }
-        return true;
+    this.building = false;
+    if (this.allowBuilding) {
+      for (let i = 0; i < this.coordinateList.length; i++) {
+        let coordinate = this.coordinateList[i];
+        this.grid['x' + coordinate.x + 'y' + coordinate.y] = this.railSegments[i]
       }
+      return true;
     }
     return false;
   }
@@ -89,7 +87,7 @@ class RailBuilder {
         if (this.railSegments[i].canBuildOn(existingRailSegment)) {
           this.railSegments[i] = this.railSegments[i].combine(existingRailSegment);
         } else {
-          tint = existingRailSegment ? 0xFF0000 : 0xFFFFFF;
+          tint = 0xFF0000;
           this.allowBuilding = false;
         }
         images.push(new Image(coordinate.x, coordinate.y, this.railSegments[i].imageName,
