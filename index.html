@@ -9,11 +9,11 @@
 
 <script type="module">
   import  {RailBuilder}  from "./RailBuilder.js";
+  import  {CameraController}  from "./CameraController.js";
 
   let WIDTH = 800;
   let HEIGHT = 640;
   let TILESIZE = 32;
-  let GRID = {};
 
   let config = {
     type: Phaser.AUTO,
@@ -50,31 +50,26 @@
     // To add a static sprite for GUI, use this.add.image(...).setScrollFactor(0)
 
     this.cameras.main.setBounds(-200, -200, 1000, 1000);
-    this.draggingCamera = false;
+    this.cameraController = new CameraController();
     this.grid = {};
     this.railBuilder = new RailBuilder(this.grid, TILESIZE);
-    this.railBuildingPositions = [];
     this.temporaryRailImages = [];
 
     this.input.on('pointerdown', function (pointer) {
       if (pointer.buttons == 1) {
-        let coordinates = new Coordinates(pointer, this.cameras.main);
-        this.railBuilder.pointerDown(coordinates)
+        this.railBuilder.pointerDown(new Coordinates(pointer, this.cameras.main))
       } else if (pointer.buttons == 2) {
-        this.lastPointerX = pointer.x;
-        this.lastPointerY = pointer.y;
-        this.draggingCamera = true;
+        this.cameraController.pointerDown(pointer);
       }
-
     }, this);
 
     this.input.on('pointerup', function (pointer) {
+      this.cameraController.pointerUp();
       let successful = this.railBuilder.pointerUp();
       if (successful) {
         // Clear the array so that the images will not be destroyed
         this.temporaryRailImages = [];
       }
-      this.draggingCamera = false;
     }, this);
 
     this.input.on('pointermove', function (pointer) {
@@ -93,12 +88,13 @@
           this.temporaryRailImages.push(railImage);
         }
       }
-      if (this.draggingCamera) {
-        this.cameras.main.scrollX -= pointer.x - this.lastPointerX;
-        this.cameras.main.scrollY -= pointer.y - this.lastPointerY;
-        this.lastPointerX = pointer.x;
-        this.lastPointerY = pointer.y
-      }
+      // Note: pointer.buttons == 2 is not checked here. The reason is that
+      // pointer.buttons will be the last button pressed. E.g., if button 2 is pressed, released
+      // and then the pointer is moved, pointer.buttons will still be 2 until another button is pressed.
+      // So it is only a small optimization to do that check.
+      let [scrollXchange, scrollYchange] = this.cameraController.pointerMove(pointer);
+      this.cameras.main.scrollX -= scrollXchange;
+      this.cameras.main.scrollY -= scrollYchange;
     }, this);
 
     let gui = new dat.GUI();
@@ -112,7 +108,7 @@
     f1.add(cam, 'rotation').min(0).step(0.01).listen();
     f1.open();
     let f2 = gui.addFolder('Other');
-    f2.add(this, 'draggingCamera').listen();
+    f2.add(this, '_draggingCamera').listen();
     f2.add(this.railBuilder, 'building').listen();
     f2.open();
   }
