@@ -23,7 +23,6 @@ class CameraController {
    * the move of the pointer will result in.
    */
   pointerMove(pointer) {
-    console.log('pointerMove');
     if (this._draggingCamera) {
       let retVal = [pointer.x - this.lastPointerX, pointer.y - this.lastPointerY];
       this.lastPointerX = pointer.x;

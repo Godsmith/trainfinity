@@ -9,6 +9,7 @@
 
 <script type="module">
   import  {RailBuilder}  from "./RailBuilder.js";
+  import  {StationBuilder}  from "./StationBuilder.js";
   import  {CameraController}  from "./CameraController.js";
 
   let WIDTH = 800;
@@ -37,6 +38,7 @@
     this.load.image('rail', 'assets/rail.png');
     this.load.image('railturn', 'assets/railturn.png');
     this.load.image('halfrail', 'assets/halfrail.png');
+    this.load.image('station', 'assets/station3.png')
   }
 
   class Coordinates {
@@ -53,11 +55,16 @@
     this.cameraController = new CameraController();
     this.grid = {};
     this.railBuilder = new RailBuilder(this.grid, TILESIZE);
-    this.temporaryRailImages = [];
+    this.stationBuilder = new StationBuilder(this.grid, TILESIZE);
+    this.temporaryBuildImages = [];
+    this.selectedActionController = this.railBuilder;
+
+    createActionSelection(this);
 
     this.input.on('pointerdown', function (pointer) {
       if (pointer.buttons == 1) {
-        this.railBuilder.pointerDown(new Coordinates(pointer, this.cameras.main))
+        let coordinates = new Coordinates(pointer, this.cameras.main);
+        this.selectedActionController.pointerDown(coordinates);
       } else if (pointer.buttons == 2) {
         this.cameraController.pointerDown(pointer);
       }
@@ -65,27 +72,28 @@
 
     this.input.on('pointerup', function (pointer) {
       this.cameraController.pointerUp();
-      let successful = this.railBuilder.pointerUp();
+      let successful = this.selectedActionController.pointerUp();
       if (successful) {
         // Clear the array so that the images will not be destroyed
-        this.temporaryRailImages = [];
+        this.temporaryBuildImages = [];
       }
     }, this);
 
     this.input.on('pointermove', function (pointer) {
       // pointermove is called after pointerup when the mouse cursor is released,
-      // so this will remove the temporary rail images unless the array is cleared
+      // so this will remove the temporary build images unless the array is cleared
       // by a successful build action.
-      for (var image of this.temporaryRailImages) {
+      for (var image of this.temporaryBuildImages) {
         image.destroy()
       }
-      let images = this.railBuilder.pointerMove(new Coordinates(pointer, this.cameras.main), this);
+      let images = this.selectedActionController.pointerMove(new Coordinates(pointer, this.cameras.main));
       if (images) {
         for (let image of images) {
-          let railImage = this.add.image(image.x, image.y, image.name);
-          railImage.angle = image.angle;
-          railImage.tint = image.tint;
-          this.temporaryRailImages.push(railImage);
+          let buildImage = this.add.image(image.x, image.y, image.name);
+          console.log(image);
+          buildImage.angle = image.angle;
+          buildImage.tint = image.tint;
+          this.temporaryBuildImages.push(buildImage);
         }
       }
       // Note: pointer.buttons == 2 is not checked here. The reason is that
@@ -108,10 +116,33 @@
     f1.add(cam, 'rotation').min(0).step(0.01).listen();
     f1.open();
     let f2 = gui.addFolder('Other');
-    f2.add(this, '_draggingCamera').listen();
+    f2.add(this.cameraController, '_draggingCamera').listen();
     f2.add(this.railBuilder, 'building').listen();
     f2.open();
   }
+
+  function createActionSelection(game) {
+    let actions = [{
+      'image': 'rail',
+      'controller': game.railBuilder
+    }, {
+      'image': 'station',
+      'controller': game.stationBuilder
+    }];
+    let x = TILESIZE;
+    let y = HEIGHT - TILESIZE;
+    for (let action of actions) {
+      let image = game.add.image(x, y, action.image);
+      image.setScrollFactor(0);
+      image.setInteractive();
+      image.depth = 1000; // Always show in front
+      image.on('pointerdown', () => {
+        game.selectedActionController = action.controller
+      });
+      x += TILESIZE;
+    }
+  }
+
 
   function update() {
   }
