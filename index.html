@@ -90,7 +90,6 @@
       if (images) {
         for (let image of images) {
           let buildImage = this.add.image(image.x, image.y, image.name);
-          console.log(image);
           buildImage.angle = image.angle;
           buildImage.tint = image.tint;
           this.temporaryBuildImages.push(buildImage);
