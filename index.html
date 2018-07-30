@@ -8,6 +8,7 @@
 <body>
 
 <script type="module">
+  import  {Grid}  from "./Grid.js";
   import  {RailBuilder}  from "./RailBuilder.js";
   import  {StationBuilder}  from "./StationBuilder.js";
   import  {CameraController}  from "./CameraController.js";
@@ -53,9 +54,9 @@
 
     this.cameras.main.setBounds(-200, -200, 1000, 1000);
     this.cameraController = new CameraController();
-    this.grid = {};
-    this.railBuilder = new RailBuilder(this.grid, TILESIZE);
-    this.stationBuilder = new StationBuilder(this.grid, TILESIZE);
+    this.grid = new Grid(TILESIZE);
+    this.railBuilder = new RailBuilder(this.grid);
+    this.stationBuilder = new StationBuilder(this.grid);
     this.temporaryBuildImages = [];
     this.selectedActionController = this.railBuilder;
 

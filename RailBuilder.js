@@ -6,8 +6,8 @@ import {Image} from "./Image.js";
 import {ActionController} from "./ActionController.js"
 
 class RailBuilder extends ActionController{
-  constructor(grid, tileSize) {
-    super(grid, tileSize);
+  constructor(grid) {
+    super(grid);
     this.positions = [];
     this.buildingSegments = [];
     this.allowBuilding = true;
@@ -22,7 +22,7 @@ class RailBuilder extends ActionController{
     if (this.building) {
       let images = [];
 
-      this.positions = this._positionsFromStartTo(position, this.tileSize);
+      this.positions = this._positionsFromStartTo(position, this.grid.tileSize);
       if (this.positions.length < 2) {
         this.allowBuilding = false;
         return;
@@ -32,9 +32,9 @@ class RailBuilder extends ActionController{
       for (let i = 0; i < this.buildingSegments.length; i++) {
         let position = this.positions[i];
         let tint = 0xFFFFFF;
-        let existingRailSegment = this.grid['x' + position.x + 'y' + position.y];
-        if (this.buildingSegments[i].canBuildOn(existingRailSegment)) {
-          this.buildingSegments[i] = this.buildingSegments[i].combine(existingRailSegment);
+        let existingBuilding = this.grid.get(position);
+        if (this.buildingSegments[i].canBuildOn(existingBuilding)) {
+          this.buildingSegments[i] = this.buildingSegments[i].combine(existingBuilding);
         } else {
           tint = 0xFF0000;
           this.allowBuilding = false;

@@ -6,8 +6,8 @@ import {Image} from "./Image.js";
 import {ActionController} from "./ActionController.js"
 
 class StationBuilder extends ActionController {
-  constructor(grid, tileSize) {
-    super(grid, tileSize);
+  constructor(grid) {
+    super(grid);
   }
 
   /**
@@ -19,7 +19,7 @@ class StationBuilder extends ActionController {
     if (this.building) {
       let images = [];
 
-      this.positions = this._positionsFromStartTo(position, this.tileSize);
+      this.positions = this._positionsFromStartTo(position, this.grid.tileSize);
       this.allowBuilding = true;
       this.buildingSegments = this.positions.map(() => new Station());
       for (let i = 0; i < this.buildingSegments.length; i++) {
@@ -39,11 +39,11 @@ class StationBuilder extends ActionController {
   _positionsToMarkInvalid(newStationPositions) {
     let invalidPositions = [];
     for (let position of newStationPositions) {
-      let existingBuilding = this.grid['x' + position.x + 'y' + position.y];
-      if (existingBuilding) {
+      if (this.grid.hasBuilding(position)) {
         invalidPositions.push(position);
       }
     }
+    console.log(this.grid);
     return invalidPositions;
   }
 }

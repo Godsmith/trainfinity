@@ -1,77 +1,85 @@
 /**
  * Created by Filip on 2018-07-26.
  */
+import {Grid}  from "./Grid.js";
 import {RailBuilder} from "./RailBuilder.js";
 import {ERailSegment, WRailSegment, NRailSegment, NSRailSegment, SRailSegment, SERailSegment,
   NWRailSegment, NERailSegment, SWRailSegment} from "./RailSegment.js";
 
 test('Build horizontal rail with length 2', () => {
-  let builder = new RailBuilder({}, 32);
+  let grid = new Grid();
+  let builder = new RailBuilder(grid);
 
   builder.pointerDown({x: 0, y: 0});
   builder.pointerMove({x: 32, y: 0});
   builder.pointerUp();
 
-  expect(builder.grid.x0y0).toBeInstanceOf(ERailSegment);
-  expect(builder.grid.x32y0).toBeInstanceOf(WRailSegment);
+  expect(builder.grid.get({x: 0, y: 0})).toBeInstanceOf(ERailSegment);
+  expect(builder.grid.get({x: 32, y: 0})).toBeInstanceOf(WRailSegment);
 });
 
 test('Build horizontal rail with length 2 in the other direction', () => {
-  let builder = new RailBuilder({}, 32);
+  let grid = new Grid();
+  let builder = new RailBuilder(grid);
 
   builder.pointerDown({x: 32, y: 0});
   builder.pointerMove({x: 0, y: 0});
   builder.pointerUp();
 
-  expect(builder.grid.x0y0).toBeInstanceOf(ERailSegment);
-  expect(builder.grid.x32y0).toBeInstanceOf(WRailSegment);
+  expect(builder.grid.get({x: 0, y: 0})).toBeInstanceOf(ERailSegment);
+  expect(builder.grid.get({x: 32, y: 0})).toBeInstanceOf(WRailSegment);
 });
 
 test('Build vertical rail with length 3', () => {
-  let builder = new RailBuilder({}, 32);
+  let grid = new Grid();
+  let builder = new RailBuilder(grid);
 
   builder.pointerDown({x: 0, y: 0});
   builder.pointerMove({x: 0, y: 64});
   builder.pointerUp();
 
-  expect(builder.grid.x0y0).toBeInstanceOf(SRailSegment);
-  expect(builder.grid.x0y32).toBeInstanceOf(NSRailSegment);
-  expect(builder.grid.x0y64).toBeInstanceOf(NRailSegment);
+  expect(builder.grid.get({x: 0, y: 0})).toBeInstanceOf(SRailSegment);
+  expect(builder.grid.get({x: 0, y: 32})).toBeInstanceOf(NSRailSegment);
+  expect(builder.grid.get({x: 0, y: 64})).toBeInstanceOf(NRailSegment);
 });
 
 test('Build vertical rail with length 3 in the other direction', () => {
-  let builder = new RailBuilder({}, 32);
+  let grid = new Grid();
+  let builder = new RailBuilder(grid);
 
   builder.pointerDown({x: 0, y: 64});
   builder.pointerMove({x: 0, y: 0});
   builder.pointerUp();
 
-  expect(builder.grid.x0y0).toBeInstanceOf(SRailSegment);
-  expect(builder.grid.x0y32).toBeInstanceOf(NSRailSegment);
-  expect(builder.grid.x0y64).toBeInstanceOf(NRailSegment);
+  expect(builder.grid.get({x: 0, y: 0})).toBeInstanceOf(SRailSegment);
+  expect(builder.grid.get({x: 0, y: 32})).toBeInstanceOf(NSRailSegment);
+  expect(builder.grid.get({x: 0, y: 64})).toBeInstanceOf(NRailSegment);
 });
 
-test('Click without moving to another square does nothing', () => {
-  let builder = new RailBuilder({}, 32);
+test('Clicking without moving to another square does nothing', () => {
+  let grid = new Grid();
+  let builder = new RailBuilder(grid);
 
   builder.pointerDown({x: 0, y: 0});
   builder.pointerMove({x: 0, y: 0});
   builder.pointerUp();
 
-  expect(builder.grid).toEqual({});
+  expect(builder.grid.count()).toEqual(0);
 });
 
 test('Moving the mouse without clicking does nothing', () => {
-  let builder = new RailBuilder({}, 32);
+  let grid = new Grid();
+  let builder = new RailBuilder(grid);
 
   builder.pointerMove({x: 0, y: 0});
   builder.pointerMove({x: 0, y: 32});
 
-  expect(builder.grid).toEqual({});
+  expect(builder.grid.count()).toEqual(0);
 });
 
 test('Build circle', () => {
-  let builder = new RailBuilder({}, 32);
+  let grid = new Grid();
+  let builder = new RailBuilder(grid);
 
   builder.pointerDown({x: 0, y: 0});
   builder.pointerMove({x: 0, y: 32});
@@ -86,14 +94,15 @@ test('Build circle', () => {
   builder.pointerMove({x: 0, y: 0});
   builder.pointerUp();
 
-  expect(builder.grid.x0y0).toBeInstanceOf(SERailSegment);
-  expect(builder.grid.x0y32).toBeInstanceOf(NERailSegment);
-  expect(builder.grid.x32y0).toBeInstanceOf(SWRailSegment);
-  expect(builder.grid.x32y32).toBeInstanceOf(NWRailSegment);
+  expect(builder.grid.get({x: 0, y: 0})).toBeInstanceOf(SERailSegment);
+  expect(builder.grid.get({x: 0, y: 32})).toBeInstanceOf(NERailSegment);
+  expect(builder.grid.get({x: 32, y: 0})).toBeInstanceOf(SWRailSegment);
+  expect(builder.grid.get({x: 32, y: 32})).toBeInstanceOf(NWRailSegment);
 });
 
 test('Invalid build (T-intersection)', () => {
-  let builder = new RailBuilder({}, 32);
+  let grid = new Grid();
+  let builder = new RailBuilder(grid);
 
   builder.pointerDown({x: 0, y: 0});
   builder.pointerMove({x: 0, y: 64});
@@ -103,5 +112,5 @@ test('Invalid build (T-intersection)', () => {
   builder.pointerMove({x: 32, y: 32});
   builder.pointerUp();
 
-  expect(Object.keys(builder.grid)).toHaveLength(3);
+  expect(builder.grid.count()).toEqual(3);
 });

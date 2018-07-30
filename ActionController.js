@@ -3,9 +3,8 @@
  */
 
 class ActionController {
-  constructor(grid, tileSize) {
+  constructor(grid) {
     this.grid = grid;
-    this.tileSize = tileSize;
     this.building = false;
   }
 
@@ -25,7 +24,7 @@ class ActionController {
     if (this.allowBuilding) {
       for (let i = 0; i < this.positions.length; i++) {
         let position = this.positions[i];
-        this.grid['x' + position.x + 'y' + position.y] = this.buildingSegments[i]
+        this.grid.set(position, this.buildingSegments[i])
       }
       return true;
     }
