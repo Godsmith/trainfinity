@@ -35,6 +35,23 @@ class StationBuilder extends ActionController {
       return images;
     }
   }
+
+  _positionsToMarkInvalid(newStationPositions) {
+    let invalidPositions = [];
+    for (let position of newStationPositions) {
+      let existingBuilding = this.grid['x' + position.x + 'y' + position.y];
+      if (existingBuilding) {
+        invalidPositions.push(position);
+      }
+    }
+    return invalidPositions;
+  }
+}
+
+class _StationPlacementAnswer {
+  constructor () {
+    this.positionsToMarkRed = [];
+  }
 }
 
 class Station {

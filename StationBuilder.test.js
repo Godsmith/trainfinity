@@ -14,3 +14,18 @@ test('Build horizontal station with length 2', () => {
   expect(builder.grid.x32y0).toBeInstanceOf(Station);
 });
 
+describe('PositionsToMarkInvalid', () => {
+  test('Any position with an existing building is marked red', () => {
+    let grid = {'x0y0': new Station()};
+    let builder = new StationBuilder(grid, 32);
+
+    expect(builder._positionsToMarkInvalid([{x: 0, y: 0}, {x: 0, y: 32}])).toEqual([{x: 0, y: 0}]);
+  });
+  // test('If the position does not have any adjacent rail, mark all adjacent squares red', () => {
+  //   let grid = {};
+  //   let builder = new StationBuilder(grid, 32);
+  //
+  //   expect(builder._positionsToMarkInvalid([{x: 0, y: 0}, {x: 0, y: 32}])).toEqual([{x: 0, y: 0}]);
+  // });
+});
+
