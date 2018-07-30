@@ -9,9 +9,9 @@ class ActionController {
     this.building = false;
   }
 
-  pointerDown(coordinates) {
-    this.startX = coordinates.x;
-    this.startY = coordinates.y;
+  pointerDown(position) {
+    this.startX = position.x;
+    this.startY = position.y;
     this.building = true
   }
 
@@ -23,37 +23,37 @@ class ActionController {
   pointerUp() {
     this.building = false;
     if (this.allowBuilding) {
-      for (let i = 0; i < this.coordinateList.length; i++) {
-        let coordinate = this.coordinateList[i];
-        this.grid['x' + coordinate.x + 'y' + coordinate.y] = this.buildingSegments[i]
+      for (let i = 0; i < this.positions.length; i++) {
+        let position = this.positions[i];
+        this.grid['x' + position.x + 'y' + position.y] = this.buildingSegments[i]
       }
       return true;
     }
     return false;
   }
 
-  _listCoordinatesFromStartTo(coordinate, tilesize) {
-    let coordinates = [];
-    if (coordinate.y === this.startY) {
-      if (coordinate.x === this.startX) {
-        return [coordinate];
+  _positionsFromStartTo(position, tilesize) {
+    let positions = [];
+    if (position.y === this.startY) {
+      if (position.x === this.startX) {
+        return [position];
       }
-      let step = coordinate.x > this.startX ? tilesize : -tilesize;
-      for (let x = this.startX; x != coordinate.x; x += step) {
-        coordinates.push({x: x, y: this.startY})
+      let step = position.x > this.startX ? tilesize : -tilesize;
+      for (let x = this.startX; x != position.x; x += step) {
+        positions.push({x: x, y: this.startY})
       }
-      // The for loop stops before adding the final coordinate, so add it here
-      coordinates.push({x: coordinate.x, y: coordinate.y});
+      // The for loop stops before adding the final position, so add it here
+      positions.push({x: position.x, y: position.y});
     }
-    if (coordinate.x === this.startX) {
-      let step = coordinate.y > this.startY ? tilesize : -tilesize;
-      for (let y = this.startY; y != coordinate.y; y += step) {
-        coordinates.push({x: this.startX, y: y})
+    if (position.x === this.startX) {
+      let step = position.y > this.startY ? tilesize : -tilesize;
+      for (let y = this.startY; y != position.y; y += step) {
+        positions.push({x: this.startX, y: y})
       }
-      // The for loop stops before adding the final coordinate, so add it here
-      coordinates.push({x: coordinate.x, y: coordinate.y});
+      // The for loop stops before adding the final position, so add it here
+      positions.push({x: position.x, y: position.y});
     }
-    return coordinates;
+    return positions;
   }
 
 }

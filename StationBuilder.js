@@ -12,25 +12,25 @@ class StationBuilder extends ActionController {
 
   /**
    * Called each time the pointer moves and returns the rail Image objects created
-   * @param coordinates an object with an x and y value representing the current location of the cursor
+   * @param position an object with an x and y value representing the current location of the cursor
    * @returns {Array} an array of Image objects representing rail pieces.
    */
-  pointerMove(coordinates) {
+  pointerMove(position) {
     if (this.building) {
       let images = [];
 
-      this.coordinateList = this._listCoordinatesFromStartTo(coordinates, this.tileSize);
+      this.positions = this._positionsFromStartTo(position, this.tileSize);
       this.allowBuilding = true;
-      this.buildingSegments = this.coordinateList.map(() => new Station());
+      this.buildingSegments = this.positions.map(() => new Station());
       for (let i = 0; i < this.buildingSegments.length; i++) {
-        let coordinate = this.coordinateList[i];
+        let position = this.positions[i];
         let tint = 0xFFFFFF;
-        let existingBuilding = this.grid['x' + coordinate.x + 'y' + coordinate.y];
+        let existingBuilding = this.grid['x' + position.x + 'y' + position.y];
         if (existingBuilding) {
           tint = 0xFF0000;
           this.allowBuilding = false;
         }
-        images.push(new Image(coordinate.x, coordinate.y, 'station', 0, tint))
+        images.push(new Image(position.x, position.y, 'station', 0, tint))
       }
       return images;
     }

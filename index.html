@@ -41,7 +41,7 @@
     this.load.image('station', 'assets/station3.png')
   }
 
-  class Coordinates {
+  class Position {
     constructor(pointer, camera) {
       this.x = Math.round((pointer.x + camera.scrollX) / TILESIZE) * TILESIZE;
       this.y = Math.round((pointer.y + camera.scrollY) / TILESIZE) * TILESIZE;
@@ -63,8 +63,8 @@
 
     this.input.on('pointerdown', function (pointer) {
       if (pointer.buttons == 1) {
-        let coordinates = new Coordinates(pointer, this.cameras.main);
-        this.selectedActionController.pointerDown(coordinates);
+        let position = new Position(pointer, this.cameras.main);
+        this.selectedActionController.pointerDown(position);
       } else if (pointer.buttons == 2) {
         this.cameraController.pointerDown(pointer);
       }
@@ -86,7 +86,7 @@
       for (var image of this.temporaryBuildImages) {
         image.destroy()
       }
-      let images = this.selectedActionController.pointerMove(new Coordinates(pointer, this.cameras.main));
+      let images = this.selectedActionController.pointerMove(new Position(pointer, this.cameras.main));
       if (images) {
         for (let image of images) {
           let buildImage = this.add.image(image.x, image.y, image.name);

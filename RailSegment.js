@@ -127,8 +127,8 @@ class NWRailSegment extends RailSegment {
 
 class RailSegmentFactory {
 
-  fromCoordinateList(coordinateList) {
-    let horizontal = (coordinateList[0].y === coordinateList[coordinateList.length - 1].y);
+  fromPositionList(positions) {
+    let horizontal = (positions[0].y === positions[positions.length - 1].y);
     let classes = {};
     if (horizontal) {
       classes.first = ERailSegment;
@@ -142,21 +142,21 @@ class RailSegmentFactory {
 
     let railSegments = [];
     railSegments.push(new classes.first());
-    for (let i = 0; i < coordinateList.length - 2; i++) {
+    for (let i = 0; i < positions.length - 2; i++) {
       railSegments.push(new classes.middle());
     }
     railSegments.push(new classes.last());
 
-    if (this[downwardsOrLeftwards](coordinateList)) {
+    if (this[downwardsOrLeftwards](positions)) {
       railSegments.reverse()
     }
 
     return railSegments;
   }
 
-  [downwardsOrLeftwards](coordinateList) {
-    let first = coordinateList[0];
-    let last = coordinateList[coordinateList.length - 1];
+  [downwardsOrLeftwards](positions) {
+    let first = positions[0];
+    let last = positions[positions.length - 1];
     return (first.x > last.x) || (first.y < last.y)
   }
 }

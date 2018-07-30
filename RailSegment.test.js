@@ -6,18 +6,18 @@ import {
   SRailSegment, NRailSegment, NSRailSegment
 } from "./RailSegment.js";
 
-test('Two horizontal coordinates', () => {
+test('Two horizontal positions', () => {
   let factory = new RailSegmentFactory();
-  let [first, second] = factory.fromCoordinateList([
+  let [first, second] = factory.fromPositionList([
     {x: 0, y: 0},
     {x: 1, y: 0}]);
   expect(first).toBeInstanceOf(ERailSegment);
   expect(second).toBeInstanceOf(WRailSegment);
 });
 
-test('Three horizontal coordinates', () => {
+test('Three horizontal positions', () => {
   let factory = new RailSegmentFactory();
-  let [first, second, third] = factory.fromCoordinateList([
+  let [first, second, third] = factory.fromPositionList([
     {x: 0, y: 0},
     {x: 1, y: 0},
     {x: 2, y: 0}]);
@@ -26,9 +26,9 @@ test('Three horizontal coordinates', () => {
   expect(third).toBeInstanceOf(WRailSegment);
 });
 
-test('Three vertical coordinates', () => {
+test('Three vertical positions', () => {
   let factory = new RailSegmentFactory();
-  let [first, second, third] = factory.fromCoordinateList([
+  let [first, second, third] = factory.fromPositionList([
     {x: 0, y: 1},
     {x: 0, y: 2},
     {x: 0, y: 3}]);
