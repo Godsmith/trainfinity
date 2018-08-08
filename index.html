@@ -16,6 +16,10 @@
   let WIDTH = 800;
   let HEIGHT = 640;
   let TILESIZE = 32;
+  let GRID_MIN_X = -200;
+  let GRID_MIN_Y = -200;
+  let GRID_MAX_X = 1000;
+  let GRID_MAX_Y = 1000;
 
   let config = {
     type: Phaser.AUTO,
@@ -40,6 +44,7 @@
     this.load.image('railturn', 'assets/railturn.png');
     this.load.image('halfrail', 'assets/halfrail.png');
     this.load.image('station', 'assets/station3.png')
+    this.load.image('grass', 'assets/grass.png')
   }
 
   class Position {
@@ -52,7 +57,13 @@
   function create() {
     // To add a static sprite for GUI, use this.add.image(...).setScrollFactor(0)
 
-    this.cameras.main.setBounds(-200, -200, 1000, 1000);
+    this.cameras.main.setBounds(GRID_MIN_X, GRID_MIN_Y, GRID_MAX_X, GRID_MAX_Y);
+    for (let x = GRID_MIN_X; x < GRID_MAX_X; x += TILESIZE) {
+      for (let y = GRID_MIN_Y; y < GRID_MAX_Y; y += TILESIZE) {
+        this.add.image(x, y, 'grass');
+        console.log(x + ', ' + y)
+      }
+    }
     this.cameraController = new CameraController();
     this.grid = new Grid(TILESIZE);
     this.railBuilder = new RailBuilder(this.grid);
