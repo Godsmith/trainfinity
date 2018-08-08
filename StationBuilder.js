@@ -43,7 +43,6 @@ class StationBuilder extends ActionController {
         invalidPositions.push(position);
       }
     }
-    console.log(this.grid);
     return invalidPositions;
   }
 }

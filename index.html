@@ -12,6 +12,7 @@
   import  {RailBuilder}  from "./RailBuilder.js";
   import  {StationBuilder}  from "./StationBuilder.js";
   import  {CameraController}  from "./CameraController.js";
+  import  {ImageCollection}  from "./ImageCollection.js";
 
   let WIDTH = 800;
   let HEIGHT = 640;
@@ -61,7 +62,6 @@
     for (let x = GRID_MIN_X; x < GRID_MAX_X; x += TILESIZE) {
       for (let y = GRID_MIN_Y; y < GRID_MAX_Y; y += TILESIZE) {
         this.add.image(x, y, 'grass');
-        console.log(x + ', ' + y)
       }
     }
     this.cameraController = new CameraController();
@@ -70,6 +70,7 @@
     this.stationBuilder = new StationBuilder(this.grid);
     this.temporaryBuildImages = [];
     this.selectedActionController = this.railBuilder;
+    this.railImageCollection = new ImageCollection();
 
     createActionSelection(this);
 
@@ -86,7 +87,12 @@
       this.cameraController.pointerUp();
       let successful = this.selectedActionController.pointerUp();
       if (successful) {
-        // Clear the array so that the images will not be destroyed
+        // Make the built images opaque and move them from the temporary array
+        // to the permanent collection
+        for (let image of this.temporaryBuildImages) {
+          image.alpha = 1.0;
+        }
+        this.railImageCollection.add(this.temporaryBuildImages);
         this.temporaryBuildImages = [];
       }
     }, this);
@@ -100,10 +106,13 @@
       }
       let images = this.selectedActionController.pointerMove(new Position(pointer, this.cameras.main));
       if (images) {
+        // Replace the temporary build images with new ones
+        this.temporaryBuildImages = [];
         for (let image of images) {
           let buildImage = this.add.image(image.x, image.y, image.name);
           buildImage.angle = image.angle;
           buildImage.tint = image.tint;
+          buildImage.alpha = 0.5;
           this.temporaryBuildImages.push(buildImage);
         }
       }
