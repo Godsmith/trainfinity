@@ -22,15 +22,12 @@ class StationBuilder extends ActionController {
       this.positions = this._positionsFromStartTo(position, this.grid.tileSize);
       this.allowBuilding = true;
       this.buildingSegments = this.positions.map(() => new Station());
-      for (let i = 0; i < this.buildingSegments.length; i++) {
-        let position = this.positions[i];
-        let tint = 0xFFFFFF;
-        let existingBuilding = this.grid.get(position);
-        if (existingBuilding) {
-          tint = 0xFF0000;
-          this.allowBuilding = false;
-        }
-        images.push(new Image(position.x, position.y, 'station', 0, tint))
+      for (let position of this.positions) {
+        images.push(new Image(position.x, position.y, 'station', 0, 0xFFFFFF))
+      }
+      for (let position of this._positionsToMarkInvalid(this.positions)) {
+        images.push(new Image(position.x, position.y, 'red', 0, 0xFFFFFF));
+        this.allowBuilding = false;
       }
       return images;
     }
