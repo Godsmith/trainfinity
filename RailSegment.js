@@ -9,6 +9,7 @@ class RailSegment {
     this.imageName = 'RailSegment image name';
     this.angle = 0;
     this.possibleCombinations = {};
+    this.stationAllowed = {N: false, E: false, S: false, W:false};
   }
 
   canBuildOn(railSegment) {
@@ -37,7 +38,8 @@ class NRailSegment extends RailSegment {
       ERailSegment: NERailSegment,
       WRailSegment: NWRailSegment,
       SRailSegment: NSRailSegment
-    }
+    };
+    this.stationAllowed['E'] = this.stationAllowed['W'] = true;
   }
 }
 class ERailSegment extends RailSegment {
@@ -50,6 +52,7 @@ class ERailSegment extends RailSegment {
       SRailSegment: SERailSegment,
       WRailSegment: WERailSegment
     }
+    this.stationAllowed['N'] = this.stationAllowed['S'] = true;
   }
 }
 class SRailSegment extends RailSegment {
@@ -61,7 +64,8 @@ class SRailSegment extends RailSegment {
       ERailSegment: SERailSegment,
       WRailSegment: SWRailSegment,
       NRailSegment: NSRailSegment
-    }
+    };
+    this.stationAllowed['E'] = this.stationAllowed['W'] = true;
   }
 }
 class WRailSegment extends RailSegment {
@@ -73,7 +77,8 @@ class WRailSegment extends RailSegment {
       NRailSegment: NWRailSegment,
       SRailSegment: SWRailSegment,
       ERailSegment: WERailSegment
-    }
+    };
+    this.stationAllowed['N'] = this.stationAllowed['S'] = true;
   }
 }
 
@@ -82,6 +87,7 @@ class NSRailSegment extends RailSegment {
     super();
     this.imageName = 'rail';
     this.angle = 0;
+    this.stationAllowed['E'] = this.stationAllowed['W'] = true;
   }
 }
 
@@ -90,6 +96,7 @@ class WERailSegment extends RailSegment {
     super();
     this.imageName = 'rail';
     this.angle = 90;
+    this.stationAllowed['N'] = this.stationAllowed['S'] = true;
   }
 }
 
@@ -162,6 +169,6 @@ class RailSegmentFactory {
 }
 
 export {
-  RailSegmentFactory, WRailSegment, ERailSegment, WERailSegment,
+  RailSegment, RailSegmentFactory, WRailSegment, ERailSegment, WERailSegment,
   SRailSegment, NRailSegment, NSRailSegment, SERailSegment, NERailSegment, SWRailSegment, NWRailSegment
 };

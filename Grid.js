@@ -2,6 +2,9 @@
  * Created by Filip on 2018-07-30.
  */
 
+import {RailSegment} from "./RailSegment.js"
+import {Station} from "./StationBuilder.js"
+
 class Grid {
   constructor(tileSize = 32) {
     this.tileSize = tileSize;
@@ -14,12 +17,20 @@ class Grid {
    * @return {Set} all adjacent positions (north, south, west, east)
    */
   adjacent(position) {
-    return new Set([
+    return [
       {x: position.x, y: position.y - this.tileSize},
       {x: position.x, y: position.y + this.tileSize},
       {x: position.x - this.tileSize, y: position.y},
       {x: position.x + this.tileSize, y: position.y},
-    ])
+    ];
+  }
+
+  isRailAdjacent(position) {
+    return this.adjacent(position).some(this.hasRail.bind(this));
+  }
+
+  isStationAdjacent(position) {
+    return this.adjacent(position).some(this.hasStation.bind(this));
   }
 
   set(position, building) {
@@ -32,6 +43,14 @@ class Grid {
 
   hasBuilding(position) {
     return !!this.get(position);
+  }
+
+  hasRail(position) {
+    return this.get(position) instanceof RailSegment;
+  }
+
+  hasStation(position) {
+    return this.get(position) instanceof Station;
   }
 
   count() {

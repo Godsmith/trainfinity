@@ -39,14 +39,15 @@ class StationBuilder extends ActionController {
       if (this.grid.hasBuilding(position)) {
         invalidPositions.push(position);
       }
-    }
-    return invalidPositions;
-  }
-}
-
-class _StationPlacementAnswer {
-  constructor () {
-    this.positionsToMarkRed = [];
+      if (!this.grid.isRailAdjacent(position)) {
+        invalidPositions.push(position);
+      }
+      if (this.grid.isStationAdjacent(position)) {
+        invalidPositions.push(position);
+      }
+    };
+    // Make the positions unique
+    return Array.from(new Set(invalidPositions));
   }
 }
 
