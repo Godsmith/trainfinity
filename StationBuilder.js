@@ -25,7 +25,7 @@ class StationBuilder extends ActionController {
       for (let i = 0; i < this.buildingSegments.length; i++) {
         let position = this.positions[i];
         let tint = 0xFFFFFF;
-        let existingBuilding = this.grid['x' + position.x + 'y' + position.y];
+        let existingBuilding = this.grid.get(position);
         if (existingBuilding) {
           tint = 0xFF0000;
           this.allowBuilding = false;
