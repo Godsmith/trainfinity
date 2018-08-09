@@ -20,7 +20,7 @@ test('Build horizontal station with length 2 adjacent to rail', () => {
 });
 
 describe('PositionsToMarkInvalid', () => {
-  test('Any position with an existing building is marked red', () => {
+  test('Disallow overlapping existing rail or station', () => {
     let grid = new Grid();
     grid.set({x:0, y: 0}, new Station());
     grid.set({x:0, y: 32}, new NSRailSegment());
@@ -28,13 +28,13 @@ describe('PositionsToMarkInvalid', () => {
 
     expect(builder._positionsToMarkInvalid([{x: 0, y: 0}, {x: 0, y: 32}])).toEqual([{x: 0, y: 0}, {x: 0, y: 32}]);
   });
-  test('If the position does not have any adjacent rail, mark the building red', () => {
+  test('Disallow if no rail adjacent', () => {
     let grid = new Grid();
     let builder = new StationBuilder(grid);
 
     expect(builder._positionsToMarkInvalid([{x: 0, y: 0}, {x: 0, y: 32}])).toEqual([{x: 0, y: 0}, {x: 0, y: 32}]);
   });
-  test('Mark red if station adjacent', () => {
+  test('Disallow if station adjacent', () => {
     let grid = new Grid();
     grid.set({x:0, y: 0}, new Station());
     grid.set({x:32, y: 0}, new Station());
