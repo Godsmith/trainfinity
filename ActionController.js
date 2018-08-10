@@ -6,6 +6,11 @@ class ActionController {
   constructor(grid) {
     this.grid = grid;
     this.building = false;
+    this.buildingSegments = [];
+    this.positions = [];
+    this.allowBuilding = true;
+    this.startX = null;
+    this.startY = null;
   }
 
   pointerDown(position) {

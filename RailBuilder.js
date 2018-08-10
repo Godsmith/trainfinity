@@ -8,9 +8,6 @@ import {ActionController} from "./ActionController.js"
 class RailBuilder extends ActionController{
   constructor(grid) {
     super(grid);
-    this.positions = [];
-    this.buildingSegments = [];
-    this.allowBuilding = true;
   }
 
   /**
