@@ -106,16 +106,16 @@
         image.destroy()
       }
       let images = this.selectedActionController.pointerMove(new Position(pointer, this.cameras.main));
-      if (images) {
-        // Replace the temporary build images with new ones
-        this.temporaryBuildImages = [];
-        for (let image of images) {
-          let buildImage = this.add.image(image.x, image.y, image.name);
-          buildImage.angle = image.angle;
-          buildImage.tint = image.tint;
-          buildImage.alpha = 0.5;
-          this.temporaryBuildImages.push(buildImage);
-        }
+      console.log(images);
+      console.log(this.selectedActionController);
+      // Replace the temporary build images with new ones
+      this.temporaryBuildImages = [];
+      for (let image of images) {
+        let buildImage = this.add.image(image.x, image.y, image.name);
+        buildImage.angle = image.angle;
+        buildImage.tint = image.tint;
+        buildImage.alpha = 0.5;
+        this.temporaryBuildImages.push(buildImage);
       }
       // Note: pointer.buttons == 2 is not checked here. The reason is that
       // pointer.buttons will be the last button pressed. E.g., if button 2 is pressed, released

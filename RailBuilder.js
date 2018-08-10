@@ -50,7 +50,6 @@ class RailBuilder extends ActionController{
   }
 
   _createBuildingSegments() {
-    // TODO: is this instance variable needed?
     this.invalidPositions = [];
     this.buildingSegments = (new RailSegmentFactory()).fromPositionList(this.positions);
     for (let i = 0; i < this.buildingSegments.length; i++) {

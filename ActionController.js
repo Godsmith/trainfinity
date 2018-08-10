@@ -27,27 +27,28 @@ class ActionController {
    * @returns {Array} an array of Image objects representing rail pieces.
    */
   pointerMove(position) {
-    if (this.building) {
-      let images = [];
-
-      this.positions = this._positionsFromStartTo(position, this.grid.tileSize);
-      if (this.positions.length < 2) {
-        this.allowBuilding = false;
-        return;
-      }
-      this.allowBuilding = true;
-      this._createBuildingSegments();
-      for (let i = 0; i < this.buildingSegments.length; i++) {
-        let position = this.positions[i];
-        images.push(new Image(position.x, position.y, this.buildingSegments[i].imageName,
-          this.buildingSegments[i].angle, 0xFFFFFF))
-      }
-      for (let position of this._positionsToMarkInvalid(this.positions)) {
-        images.push(new Image(position.x, position.y, 'red', 0, 0xFFFFFF));
-        this.allowBuilding = false;
-      }
-      return images;
+    if (!this.building) {
+      return [];
     }
+    this.positions = this._positionsFromStartTo(position, this.grid.tileSize);
+    if (this.positions.length < 2) {
+      this.allowBuilding = false;
+      return [];
+    }
+
+    let images = [];
+    this.allowBuilding = true;
+    this._createBuildingSegments();
+    for (let i = 0; i < this.buildingSegments.length; i++) {
+      let position = this.positions[i];
+      images.push(new Image(position.x, position.y, this.buildingSegments[i].imageName,
+        this.buildingSegments[i].angle, 0xFFFFFF))
+    }
+    for (let position of this._positionsToMarkInvalid(this.positions)) {
+      images.push(new Image(position.x, position.y, 'red', 0, 0xFFFFFF));
+      this.allowBuilding = false;
+    }
+    return images;
   }
 
   /**
