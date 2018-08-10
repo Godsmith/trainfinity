@@ -2,40 +2,23 @@
  * Created by Filip on 2018-07-28.
  */
 
-import {Image} from "./Image.js";
 import {ActionController} from "./ActionController.js"
+
+class Station {
+  constructor() {
+    this.imageName = 'station';
+    this.angle = 0;
+  }
+}
 
 class StationBuilder extends ActionController {
   constructor(grid) {
     super(grid);
   }
 
-  /**
-   * Called each time the pointer moves and returns the rail Image objects created
-   * @param position an object with an x and y value representing the current location of the cursor
-   * @returns {Array} an array of Image objects representing rail pieces.
-   */
-  pointerMove(position) {
-    if (this.building) {
-      let images = [];
-
-      this.positions = this._positionsFromStartTo(position, this.grid.tileSize);
-      this.allowBuilding = true;
-      this.buildingSegments = this.positions.map(() => new Station());
-      for (let position of this.positions) {
-        images.push(new Image(position.x, position.y, 'station', 0, 0xFFFFFF))
-      }
-      for (let position of this._positionsToMarkInvalid(this.positions)) {
-        images.push(new Image(position.x, position.y, 'red', 0, 0xFFFFFF));
-        this.allowBuilding = false;
-      }
-      return images;
-    }
-  }
-
-  _positionsToMarkInvalid(newStationPositions) {
+  _positionsToMarkInvalid() {
     let invalidPositions = [];
-    for (let position of newStationPositions) {
+    for (let position of this.positions) {
       if (this.grid.hasBuilding(position)) {
         invalidPositions.push(position);
       }
@@ -45,15 +28,16 @@ class StationBuilder extends ActionController {
       if (this.grid.isStationAdjacent(position)) {
         invalidPositions.push(position);
       }
-    };
+    }
+    console.log(invalidPositions);
     // Make the positions unique
     return Array.from(new Set(invalidPositions));
   }
-}
 
-class Station {
-  constructor() {
+  _createBuildingSegments() {
+    this.buildingSegments = this.positions.map(() => new Station());
   }
 }
+
 
 export {StationBuilder, Station};

@@ -2,6 +2,8 @@
  * Created by Filip on 2018-07-28.
  */
 
+import {Image} from "./Image.js";
+
 class ActionController {
   constructor(grid) {
     this.grid = grid;
@@ -17,6 +19,54 @@ class ActionController {
     this.startX = position.x;
     this.startY = position.y;
     this.building = true
+  }
+
+  /**
+   * Called each time the pointer moves and returns the rail Image objects created
+   * @param position an object with an x and y value representing the current location of the cursor
+   * @returns {Array} an array of Image objects representing rail pieces.
+   */
+  pointerMove(position) {
+    if (this.building) {
+      let images = [];
+
+      this.positions = this._positionsFromStartTo(position, this.grid.tileSize);
+      if (this.positions.length < 2) {
+        this.allowBuilding = false;
+        return;
+      }
+      this.allowBuilding = true;
+      this._createBuildingSegments();
+      for (let i = 0; i < this.buildingSegments.length; i++) {
+        let position = this.positions[i];
+        images.push(new Image(position.x, position.y, this.buildingSegments[i].imageName,
+          this.buildingSegments[i].angle, 0xFFFFFF))
+      }
+      for (let position of this._positionsToMarkInvalid(this.positions)) {
+        images.push(new Image(position.x, position.y, 'red', 0, 0xFFFFFF));
+        this.allowBuilding = false;
+      }
+      return images;
+    }
+  }
+
+  /**
+   * Create and store this.buildingSegments which are the objects that will be created
+   * by the controller
+   * @private
+   */
+  _createBuildingSegments() {
+    throw new Error('Not implemented');
+  }
+
+  /**
+   * Return a list of Positions that we currently try to build on that cannot be built on
+   * These will be marked red.
+   * @returns {Array}
+   * @private
+   */
+  _positionsToMarkInvalid() {
+    throw new Error('Not implemented');
   }
 
   /**

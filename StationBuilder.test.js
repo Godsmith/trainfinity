@@ -25,14 +25,16 @@ describe('PositionsToMarkInvalid', () => {
     grid.set({x:0, y: 0}, new Station());
     grid.set({x:0, y: 32}, new NSRailSegment());
     let builder = new StationBuilder(grid);
+    builder.positions = [{x: 0, y: 0}, {x: 0, y: 32}];
 
-    expect(builder._positionsToMarkInvalid([{x: 0, y: 0}, {x: 0, y: 32}])).toEqual([{x: 0, y: 0}, {x: 0, y: 32}]);
+    expect(builder._positionsToMarkInvalid()).toEqual([{x: 0, y: 0}, {x: 0, y: 32}]);
   });
   test('Disallow if no rail adjacent', () => {
     let grid = new Grid();
     let builder = new StationBuilder(grid);
+    builder.positions = [{x: 0, y: 0}, {x: 0, y: 32}];
 
-    expect(builder._positionsToMarkInvalid([{x: 0, y: 0}, {x: 0, y: 32}])).toEqual([{x: 0, y: 0}, {x: 0, y: 32}]);
+    expect(builder._positionsToMarkInvalid()).toEqual([{x: 0, y: 0}, {x: 0, y: 32}]);
   });
   test('Disallow if station adjacent', () => {
     let grid = new Grid();
@@ -41,8 +43,9 @@ describe('PositionsToMarkInvalid', () => {
     grid.set({x:0, y: 64}, new WERailSegment());
     grid.set({x:32, y: 64}, new WERailSegment());
     let builder = new StationBuilder(grid);
+    builder.positions = [{x: 0, y: 32}, {x: 32, y: 32}];
 
-    expect(builder._positionsToMarkInvalid([{x: 0, y: 32}, {x: 32, y: 32}])).toEqual([{x: 0, y: 32}, {x: 32, y: 32}]);
+    expect(builder._positionsToMarkInvalid()).toEqual([{x: 0, y: 32}, {x: 32, y: 32}]);
   });
 });
 

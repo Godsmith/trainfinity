@@ -8,6 +8,7 @@ import {ActionController} from "./ActionController.js"
 class RailBuilder extends ActionController{
   constructor(grid) {
     super(grid);
+    this.invalidPositions = [];
   }
 
   /**
@@ -15,7 +16,7 @@ class RailBuilder extends ActionController{
    * @param position an object with an x and y value representing the current location of the cursor
    * @returns {Array} an array of Image objects representing rail pieces.
    */
-  pointerMove(position) {
+  oldpointerMove(position) {
     if (this.building) {
       let images = [];
 
@@ -40,6 +41,26 @@ class RailBuilder extends ActionController{
           this.buildingSegments[i].angle, tint))
       }
       return images;
+    }
+  }
+
+  _positionsToMarkInvalid() {
+    // This depends on this.invalidPositions have been previously created.
+    return this.invalidPositions;
+  }
+
+  _createBuildingSegments() {
+    // TODO: is this instance variable needed?
+    this.invalidPositions = [];
+    this.buildingSegments = (new RailSegmentFactory()).fromPositionList(this.positions);
+    for (let i = 0; i < this.buildingSegments.length; i++) {
+      let position = this.positions[i];
+      let existingBuilding = this.grid.get(position);
+      if (this.buildingSegments[i].canBuildOn(existingBuilding)) {
+        this.buildingSegments[i] = this.buildingSegments[i].combine(existingBuilding);
+      } else {
+        this.invalidPositions.push(position);
+      }
     }
   }
 
