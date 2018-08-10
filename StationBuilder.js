@@ -29,7 +29,6 @@ class StationBuilder extends ActionController {
         invalidPositions.push(position);
       }
     }
-    console.log(invalidPositions);
     // Make the positions unique
     return Array.from(new Set(invalidPositions));
   }
