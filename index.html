@@ -11,6 +11,7 @@
   import  {Grid}  from "./Grid.js";
   import  {RailBuilder}  from "./RailBuilder.js";
   import  {StationBuilder}  from "./StationBuilder.js";
+  import  {TrainBuilder}  from "./TrainBuilder.js";
   import  {CameraController}  from "./CameraController.js";
   import  {ImageCollection}  from "./ImageCollection.js";
 
@@ -47,6 +48,7 @@
     this.load.image('station', 'assets/station3.png')
     this.load.image('grass', 'assets/grass.png')
     this.load.image('red', 'assets/red.png')
+    this.load.image('train', 'assets/train.png')
   }
 
   class Position {
@@ -69,6 +71,7 @@
     this.grid = new Grid(TILESIZE);
     this.railBuilder = new RailBuilder(this.grid);
     this.stationBuilder = new StationBuilder(this.grid);
+    this.trainBuilder = new TrainBuilder(this.grid);
     this.temporaryBuildImages = [];
     this.selectedActionController = this.railBuilder;
     this.railImageCollection = new ImageCollection();
@@ -106,8 +109,6 @@
         image.destroy()
       }
       let images = this.selectedActionController.pointerMove(new Position(pointer, this.cameras.main));
-      console.log(images);
-      console.log(this.selectedActionController);
       // Replace the temporary build images with new ones
       this.temporaryBuildImages = [];
       for (let image of images) {
@@ -149,6 +150,9 @@
     }, {
       'image': 'station',
       'controller': game.stationBuilder
+    }, {
+      'image': 'train',
+      'controller': game.trainBuilder
     }];
     let x = TILESIZE;
     let y = HEIGHT - TILESIZE;
