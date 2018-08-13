@@ -73,8 +73,10 @@
     this.stationBuilder = new StationBuilder(this.grid);
     this.trainBuilder = new TrainBuilder(this.grid);
     this.temporaryBuildImages = [];
-    this.selectedActionController = this.railBuilder;
     this.railImageCollection = new ImageCollection();
+    this.trainImageCollection = new ImageCollection();
+    this.selectedActionController = this.railBuilder;
+    this.selectedImageCollection = this.railImageCollection;
 
     createActionSelection(this);
 
@@ -96,7 +98,7 @@
         for (let image of this.temporaryBuildImages) {
           image.alpha = 1.0;
         }
-        this.railImageCollection.add(this.temporaryBuildImages);
+        this.selectedImageCollection.add(this.temporaryBuildImages);
         this.temporaryBuildImages = [];
       }
     }, this);
@@ -114,6 +116,7 @@
       for (let image of images) {
         let buildImage = this.add.image(image.x, image.y, image.name);
         buildImage.angle = image.angle;
+        //TODO: remove tint from everywhere
         buildImage.tint = image.tint;
         buildImage.alpha = 0.5;
         this.temporaryBuildImages.push(buildImage);
@@ -146,13 +149,18 @@
   function createActionSelection(game) {
     let actions = [{
       'image': 'rail',
-      'controller': game.railBuilder
+      'controller': game.railBuilder,
+      'imageCollection': game.railImageCollection
     }, {
       'image': 'station',
-      'controller': game.stationBuilder
+      'controller': game.stationBuilder,
+      'imageCollection': game.railImageCollection
     }, {
       'image': 'train',
-      'controller': game.trainBuilder
+      'controller': game.trainBuilder,
+      // The trainImageCollection is not really used, it is just here so that
+      // the created trains will not overwrite the rails etc
+      'imageCollection': game.trainImageCollection
     }];
     let x = TILESIZE;
     let y = HEIGHT - TILESIZE;
@@ -162,7 +170,8 @@
       image.setInteractive();
       image.depth = 1000; // Always show in front
       image.on('pointerdown', () => {
-        game.selectedActionController = action.controller
+        game.selectedActionController = action.controller;
+        game.selectedImageCollection = action.imageCollection;
       });
       x += TILESIZE;
     }

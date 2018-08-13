@@ -1,4 +1,9 @@
 /**
+ * Controller for placing trains
+ *
+ * Can only place trains on rail.
+ * Does not write to the grid.
+ *
  * Created by Filip on 2018-08-10.
  */
 
@@ -23,6 +28,9 @@ class TrainBuilder extends ActionController {
 
   _createBuildingSegments() {
     this.buildingSegments = this.positions.map(() => new Train());
+  }
+
+  _writeToGrid(position, building) {
   }
 }
 

@@ -82,11 +82,21 @@ class ActionController {
     if (this.allowBuilding) {
       for (let i = 0; i < this.positions.length; i++) {
         let position = this.positions[i];
-        this.grid.set(position, this.buildingSegments[i])
+        this._writeToGrid(position, this.buildingSegments[i])
       }
       return true;
     }
     return false;
+  }
+
+  /**
+   * Called in pointerUp
+   * @param position the grid position to write to
+   * @param building what to write to that position
+   * @private
+   */
+  _writeToGrid(position, building) {
+    this.grid.set(position, building)
   }
 
   _positionsFromStartTo(position, tilesize) {

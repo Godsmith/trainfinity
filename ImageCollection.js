@@ -2,6 +2,7 @@
  * Created by Filip on 2018-08-08.
  */
 
+// TODO: remove the need to have these imagecollections by storing images to the grid instead
 class ImageCollection {
   constructor() {
     this._images = {};
