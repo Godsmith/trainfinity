@@ -56,6 +56,7 @@ class ActionController {
    * by the controller
    * @private
    */
+  /* istanbul ignore next */
   _createBuildingSegments() {
     throw new Error('Not implemented');
   }
@@ -66,6 +67,7 @@ class ActionController {
    * @returns {Array}
    * @private
    */
+  /* istanbul ignore next */
   _positionsToMarkInvalid() {
     throw new Error('Not implemented');
   }
