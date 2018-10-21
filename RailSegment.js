@@ -9,7 +9,8 @@ class RailSegment {
     this.imageName = 'RailSegment image name';
     this.angle = 0;
     this.possibleCombinations = {};
-    this.stationAllowed = {N: false, E: false, S: false, W:false};
+    this.stationAllowed = {N: false, E: false, S: false, W: false};
+    this._connectedAdjacentPositionDeltas = [];
   }
 
   canBuildOn(railSegment) {
@@ -27,6 +28,15 @@ class RailSegment {
     let railSegmentClass = this.possibleCombinations[railSegment.constructor.name];
     return new railSegmentClass;
   }
+
+  /**
+   * Return the connected positions, where 1 point is 1 tile.
+   *
+   * @return an array of position modifications, e.g. [{x: -1, y: 0}, {x: 1: y: 0}]
+   */
+  connectedAdjacentPositions() {
+    return this._connectedAdjacentPositionDeltas;
+  }
 }
 
 class NRailSegment extends RailSegment {
@@ -40,6 +50,7 @@ class NRailSegment extends RailSegment {
       SRailSegment: NSRailSegment
     };
     this.stationAllowed['E'] = this.stationAllowed['W'] = true;
+    this._connectedAdjacentPositionDeltas = [{x: 0, y: -1}];
   }
 }
 class ERailSegment extends RailSegment {
@@ -51,8 +62,9 @@ class ERailSegment extends RailSegment {
       NRailSegment: NERailSegment,
       SRailSegment: SERailSegment,
       WRailSegment: WERailSegment
-    }
+    };
     this.stationAllowed['N'] = this.stationAllowed['S'] = true;
+    this._connectedAdjacentPositionDeltas = [{x: 1, y: 0}];
   }
 }
 class SRailSegment extends RailSegment {
@@ -66,6 +78,7 @@ class SRailSegment extends RailSegment {
       NRailSegment: NSRailSegment
     };
     this.stationAllowed['E'] = this.stationAllowed['W'] = true;
+    this._connectedAdjacentPositionDeltas = [{x: 0, y: 1}];
   }
 }
 class WRailSegment extends RailSegment {
@@ -79,6 +92,7 @@ class WRailSegment extends RailSegment {
       ERailSegment: WERailSegment
     };
     this.stationAllowed['N'] = this.stationAllowed['S'] = true;
+    this._connectedAdjacentPositionDeltas = [{x: -1, y: 0}];
   }
 }
 
@@ -88,6 +102,7 @@ class NSRailSegment extends RailSegment {
     this.imageName = 'rail';
     this.angle = 0;
     this.stationAllowed['E'] = this.stationAllowed['W'] = true;
+    this._connectedAdjacentPositionDeltas = [{x: 0, y: -1}, {x: 0, y: 1}];
   }
 }
 
@@ -97,6 +112,7 @@ class WERailSegment extends RailSegment {
     this.imageName = 'rail';
     this.angle = 90;
     this.stationAllowed['N'] = this.stationAllowed['S'] = true;
+    this._connectedAdjacentPositionDeltas = [{x: -1, y: 0}, {x: 1, y: 0}];
   }
 }
 
@@ -105,6 +121,7 @@ class NERailSegment extends RailSegment {
     super();
     this.imageName = 'railturn';
     this.angle = 0;
+    this._connectedAdjacentPositionDeltas = [{x: 0, y: -1}, {x: 1, y: 0}];
   }
 }
 
@@ -113,6 +130,7 @@ class SERailSegment extends RailSegment {
     super();
     this.imageName = 'railturn';
     this.angle = 90;
+    this._connectedAdjacentPositionDeltas = [{x: 0, y: 1}, {x: 1, y: 0}];
   }
 }
 
@@ -121,6 +139,7 @@ class SWRailSegment extends RailSegment {
     super();
     this.imageName = 'railturn';
     this.angle = 180;
+    this._connectedAdjacentPositionDeltas = [{x: 0, y: 1}, {x: -1, y: 0}];
   }
 }
 
@@ -129,6 +148,7 @@ class NWRailSegment extends RailSegment {
     super();
     this.imageName = 'railturn';
     this.angle = 270;
+    this._connectedAdjacentPositionDeltas = [{x: 0, y: -1}, {x: -1, y: 0}];
   }
 }
 

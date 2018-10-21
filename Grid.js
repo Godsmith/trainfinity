@@ -56,6 +56,81 @@ class Grid {
   count() {
     return Object.keys(this._buildings).length;
   }
+
+  /**
+   * Get all stations that can be reached from the selected rail
+   * @param position
+   * @returns an array of positions where the connected stations are.
+   */
+  connectedStationPositions(position) {
+    if (!hasRail(position)) {
+      return [];
+    }
+
+  }
+
+  /**
+   * Starting with the selected rail, walk around and find all
+   * positions that are connected
+   *
+   * @param position the starting position
+   * @param positions collected so far (for recursion)
+   * @returns an array with all connected positions
+   * @private
+   */
+  _connectedRailPositions(position, positions=[]) {
+    if (this._isPositionInArray(position, positions)) {
+      return;
+    }
+    if (!this.hasRail(position)) {
+      return;
+    }
+    positions.push(position);
+    console.log(position)
+    let rail = this.get(position);
+    for (let delta_position of rail.connectedAdjacentPositions(position)) {
+      let new_position = this._position_plus_delta(position, delta_position);
+      this._connectedRailPositions(new_position, positions)
+    }
+    return positions
+  }
+
+  _isPositionInArray(position, array) {
+    for (let new_position of array) {
+      if (position.x == new_position.x && position.y == new_position.y) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Add a position to a delta position
+   *
+   * @param position a position, such as {x: 32, y: 64}
+   * @param delta_position a delta in position, such as {x: 1, y: 0}. Expressed in number of tiles.
+   * @private
+   */
+  _position_plus_delta(position, delta_position) {
+    return {
+      x: position.x + delta_position.x * this.tileSize,
+      y: position.y + delta_position.y * this.tileSize
+    }
+  }
+
+  /**
+   * Return an array of points corresponding to the path from one rail position
+   * @param position
+   * @return an array [x1, y1, x2, y2, ...] that specifies the points
+   */
+  curve(position) {
+    let array = [];
+    for (let p of this._connectedRailPositions(position)) {
+      array.push(p.x);
+      array.push(p.y);
+    }
+    return array;
+  }
 }
 
 export {Grid};
