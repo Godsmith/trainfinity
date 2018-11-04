@@ -12,8 +12,8 @@ class Station {
 }
 
 class StationBuilder extends ActionController {
-  constructor(grid) {
-    super(grid);
+  constructor(grid, physicsGroup) {
+    super(grid, physicsGroup);
   }
 
   _positionsToMarkInvalid() {

@@ -86,7 +86,6 @@ class Grid {
       return;
     }
     positions.push(position);
-    console.log(position)
     let rail = this.get(position);
     for (let delta_position of rail.connectedAdjacentPositions(position)) {
       let new_position = this._position_plus_delta(position, delta_position);

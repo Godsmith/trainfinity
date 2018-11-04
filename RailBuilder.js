@@ -6,8 +6,8 @@ import {Image} from "./Image.js";
 import {ActionController} from "./ActionController.js"
 
 class RailBuilder extends ActionController{
-  constructor(grid) {
-    super(grid);
+  constructor(grid, physicsGroup) {
+    super(grid, physicsGroup);
     this.invalidPositions = [];
   }
 

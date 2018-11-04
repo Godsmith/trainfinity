@@ -27,6 +27,9 @@
     type: Phaser.AUTO,
     width: WIDTH,
     height: HEIGHT,
+    physics: {
+      default: 'arcade'
+    },
     disableContextMenu: true,
     scene: {
       initialize: initialize,
@@ -69,9 +72,12 @@
     }
     this.cameraController = new CameraController();
     this.grid = new Grid(TILESIZE);
-    this.railBuilder = new RailBuilder(this.grid);
-    this.stationBuilder = new StationBuilder(this.grid);
-    this.trainBuilder = new TrainBuilder(this.grid);
+    this.buildingGroup = this.physics.add.staticGroup();
+    this.locomotiveGroup = this.physics.add.staticGroup();
+    this.railBuilder = new RailBuilder(this.grid, this.buildingGroup);
+    this.stationBuilder = new StationBuilder(this.grid, this.buildingGroup);
+    this.trainBuilder = new TrainBuilder(this.grid, this.locomotiveGroup);
+
     this.temporaryBuildImages = [];
     this.railImageCollection = new ImageCollection();
     this.trainImageCollection = new ImageCollection();
@@ -114,7 +120,7 @@
       // Replace the temporary build images with new ones
       this.temporaryBuildImages = [];
       for (let image of images) {
-        let buildImage = this.add.image(image.x, image.y, image.name);
+        let buildImage = this.selectedActionController.physicsGroup.create(image.x, image.y, image.name);
         buildImage.angle = image.angle;
         buildImage.alpha = 0.5;
         this.temporaryBuildImages.push(buildImage);

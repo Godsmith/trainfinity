@@ -5,8 +5,9 @@
 import {Image} from "./Image.js";
 
 class ActionController {
-  constructor(grid) {
+  constructor(grid, physicsGroup) {
     this.grid = grid;
+    this.physicsGroup = physicsGroup;  // The group which created physics objects are added to
     this.building = false;
     this.buildingSegments = [];
     this.positions = [];
