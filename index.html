@@ -78,6 +78,27 @@
   }
   Building.index = 0;
 
+  /** Class representing a locomotive */
+  class Locomotive extends Phaser.GameObjects.Sprite {
+    /**
+     * Create a locomotive. Arguments are the same as for the parent class.
+     * @param scene
+     * @param x
+     * @param y
+     * @param texture
+     * @param frame
+     */
+    constructor(scene, x, y, texture, frame) {
+      super(scene, x, y, texture, frame);
+    }
+
+    preUpdate(time, delta) {
+      super.preUpdate(time, delta);
+      this.setPosition(this.x + 1, this.y)
+    }
+  }
+  Building.index = 0;
+
   function create() {
     // To add a static sprite for GUI, use this.add.image(...).setScrollFactor(0)
 
@@ -90,12 +111,13 @@
     this.cameraController = new CameraController();
     this.grid = new Grid(TILESIZE);
     this.buildingGroup = this.physics.add.group({classType: Building});
-    this.locomotiveGroup = this.physics.add.group();
+    this.locomotiveGroup = this.physics.add.group({classType: Locomotive});
     this.railBuilder = new RailBuilder(this.grid, this.buildingGroup);
     this.stationBuilder = new StationBuilder(this.grid, this.buildingGroup);
     this.trainBuilder = new TrainBuilder(this.grid, this.locomotiveGroup);
 
     this.physics.add.overlap(this.buildingGroup, this.buildingGroup, buildingOnBuilding, null, this);
+    this.physics.add.overlap(this.locomotiveGroup, this.buildingGroup, locomotiveOnBuilding, null, this);
 
     this.temporaryBuildImages = [];
     this.selectedActionController = this.railBuilder;
@@ -182,6 +204,9 @@
         building1.destroy();
       }
     }
+  }
+
+  function locomotiveOnBuilding(locomotive, building) {
   }
 
   function createActionSelection(game) {
