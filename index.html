@@ -13,7 +13,6 @@
   import  {StationBuilder}  from "./StationBuilder.js";
   import  {TrainBuilder}  from "./TrainBuilder.js";
   import  {CameraController}  from "./CameraController.js";
-  import  {ImageCollection}  from "./ImageCollection.js";
 
   let WIDTH = 800;
   let HEIGHT = 640;
@@ -61,6 +60,24 @@
     }
   }
 
+  /** Class representing a building, i.e. rail, station etc */
+  class Building extends Phaser.GameObjects.Image {
+    /**
+     * Create a building. Arguments are the same as for the parent class.
+     * @param scene
+     * @param x
+     * @param y
+     * @param texture
+     * @param frame
+     */
+    constructor(scene, x, y, texture, frame) {
+      super(scene, x, y, texture, frame);
+      // Keep track of which building is newer
+      this.index = Building.index++;
+    }
+  }
+  Building.index = 0;
+
   function create() {
     // To add a static sprite for GUI, use this.add.image(...).setScrollFactor(0)
 
@@ -72,17 +89,16 @@
     }
     this.cameraController = new CameraController();
     this.grid = new Grid(TILESIZE);
-    this.buildingGroup = this.physics.add.staticGroup();
-    this.locomotiveGroup = this.physics.add.staticGroup();
+    this.buildingGroup = this.physics.add.group({classType: Building});
+    this.locomotiveGroup = this.physics.add.group();
     this.railBuilder = new RailBuilder(this.grid, this.buildingGroup);
     this.stationBuilder = new StationBuilder(this.grid, this.buildingGroup);
     this.trainBuilder = new TrainBuilder(this.grid, this.locomotiveGroup);
 
+    this.physics.add.overlap(this.buildingGroup, this.buildingGroup, buildingOnBuilding, null, this);
+
     this.temporaryBuildImages = [];
-    this.railImageCollection = new ImageCollection();
-    this.trainImageCollection = new ImageCollection();
     this.selectedActionController = this.railBuilder;
-    this.selectedImageCollection = this.railImageCollection;
 
     createActionSelection(this);
 
@@ -103,8 +119,8 @@
         // to the permanent collection
         for (let image of this.temporaryBuildImages) {
           image.alpha = 1.0;
+          image.setActive(true);
         }
-        this.selectedImageCollection.add(this.temporaryBuildImages);
         this.temporaryBuildImages = [];
       }
     }, this);
@@ -114,7 +130,7 @@
       // so this will remove the temporary build images unless the array is cleared
       // by a successful build action.
       for (var image of this.temporaryBuildImages) {
-        image.destroy()
+        image.destroy();
       }
       let images = this.selectedActionController.pointerMove(new Position(pointer, this.cameras.main));
       // Replace the temporary build images with new ones
@@ -123,6 +139,7 @@
         let buildImage = this.selectedActionController.physicsGroup.create(image.x, image.y, image.name);
         buildImage.angle = image.angle;
         buildImage.alpha = 0.5;
+        buildImage.setActive(false);
         this.temporaryBuildImages.push(buildImage);
       }
       // Note: pointer.buttons == 2 is not checked here. The reason is that
@@ -150,21 +167,33 @@
     f2.open();
   }
 
+  /**
+   * Called when a building is built on top of another building.
+   * Destroy the oldest building.
+   *
+   * @param building1 a Building
+   * @param building2 a Building
+   */
+  function buildingOnBuilding(building1, building2) {
+    if (building1.active && building2.active) {
+      if (building1.index > building2.index) {
+        building2.destroy();
+      } else {
+        building1.destroy();
+      }
+    }
+  }
+
   function createActionSelection(game) {
     let actions = [{
       'image': 'rail',
       'controller': game.railBuilder,
-      'imageCollection': game.railImageCollection
     }, {
       'image': 'station',
       'controller': game.stationBuilder,
-      'imageCollection': game.railImageCollection
     }, {
       'image': 'train',
       'controller': game.trainBuilder,
-      // The trainImageCollection is not really used, it is just here so that
-      // the created trains will not overwrite the rails etc
-      'imageCollection': game.trainImageCollection
     }];
     let x = TILESIZE;
     let y = HEIGHT - TILESIZE;
@@ -175,7 +204,6 @@
       image.depth = 1000; // Always show in front
       image.on('pointerdown', () => {
         game.selectedActionController = action.controller;
-        game.selectedImageCollection = action.imageCollection;
       });
       x += TILESIZE;
     }
