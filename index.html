@@ -13,6 +13,8 @@
   import  {StationBuilder}  from "./StationBuilder.js";
   import  {TrainBuilder}  from "./TrainBuilder.js";
   import  {CameraController}  from "./CameraController.js";
+  import  {Locomotive}  from "./Locomotive.js";
+  import  {NSRailSegment, SERailSegment, WRailSegment, NRailSegment} from "./RailSegment.js"
 
   let WIDTH = 800;
   let HEIGHT = 640;
@@ -47,10 +49,10 @@
     this.load.image('rail', 'assets/rail.png');
     this.load.image('railturn', 'assets/railturn.png');
     this.load.image('halfrail', 'assets/halfrail.png');
-    this.load.image('station', 'assets/station3.png')
-    this.load.image('grass', 'assets/grass.png')
-    this.load.image('red', 'assets/red.png')
-    this.load.image('train', 'assets/train.png')
+    this.load.image('station', 'assets/station3.png');
+    this.load.image('grass', 'assets/grass.png');
+    this.load.image('red', 'assets/red.png');
+    this.load.image('locomotive', 'assets/locomotive.png')
   }
 
   class Position {
@@ -78,27 +80,6 @@
   }
   Building.index = 0;
 
-  /** Class representing a locomotive */
-  class Locomotive extends Phaser.GameObjects.Sprite {
-    /**
-     * Create a locomotive. Arguments are the same as for the parent class.
-     * @param scene
-     * @param x
-     * @param y
-     * @param texture
-     * @param frame
-     */
-    constructor(scene, x, y, texture, frame) {
-      super(scene, x, y, texture, frame);
-    }
-
-    preUpdate(time, delta) {
-      super.preUpdate(time, delta);
-      this.setPosition(this.x + 1, this.y)
-    }
-  }
-  Building.index = 0;
-
   function create() {
     // To add a static sprite for GUI, use this.add.image(...).setScrollFactor(0)
 
@@ -112,14 +93,14 @@
     this.grid = new Grid(TILESIZE);
     this.buildingGroup = this.physics.add.group({classType: Building});
     this.locomotiveGroup = this.physics.add.group({classType: Locomotive});
-    this.railBuilder = new RailBuilder(this.grid, this.buildingGroup);
-    this.stationBuilder = new StationBuilder(this.grid, this.buildingGroup);
-    this.trainBuilder = new TrainBuilder(this.grid, this.locomotiveGroup);
+    this.railBuilder = new RailBuilder(this.grid, this.buildingGroup, this);
+    this.stationBuilder = new StationBuilder(this.grid, this.buildingGroup, this);
+    this.trainBuilder = new TrainBuilder(this.grid, this.locomotiveGroup, this);
 
     this.physics.add.overlap(this.buildingGroup, this.buildingGroup, buildingOnBuilding, null, this);
     this.physics.add.overlap(this.locomotiveGroup, this.buildingGroup, locomotiveOnBuilding, null, this);
 
-    this.temporaryBuildImages = [];
+    this.temporaryGameObjects = [];
     this.selectedActionController = this.railBuilder;
 
     createActionSelection(this);
@@ -137,32 +118,31 @@
       this.cameraController.pointerUp();
       let successful = this.selectedActionController.pointerUp();
       if (successful) {
-        // Make the built images opaque and move them from the temporary array
+        // Make the built objects opaque and move them from the temporary array
         // to the permanent collection
-        for (let image of this.temporaryBuildImages) {
-          image.alpha = 1.0;
-          image.setActive(true);
+        for (let object of this.temporaryGameObjects) {
+          object.alpha = 1.0;
+          object.setActive(true);
         }
-        this.temporaryBuildImages = [];
+        this.temporaryGameObjects = [];
       }
     }, this);
 
     this.input.on('pointermove', function (pointer) {
       // pointermove is called after pointerup when the mouse cursor is released,
-      // so this will remove the temporary build images unless the array is cleared
+      // so this will remove the temporary GameObjects unless the array is cleared
       // by a successful build action.
-      for (var image of this.temporaryBuildImages) {
-        image.destroy();
+      for (var gameObject of this.temporaryGameObjects) {
+        gameObject.destroy();
       }
-      let images = this.selectedActionController.pointerMove(new Position(pointer, this.cameras.main));
-      // Replace the temporary build images with new ones
-      this.temporaryBuildImages = [];
-      for (let image of images) {
-        let buildImage = this.selectedActionController.physicsGroup.create(image.x, image.y, image.name);
-        buildImage.angle = image.angle;
-        buildImage.alpha = 0.5;
-        buildImage.setActive(false);
-        this.temporaryBuildImages.push(buildImage);
+      let gameObjects = this.selectedActionController.pointerMove(new Position(pointer, this.cameras.main));
+      // Replace the temporary GameObjects with new ones
+      this.temporaryGameObjects = [];
+      for (let gameObject of gameObjects) {
+        this.selectedActionController.physicsGroup.add(gameObject, true);
+        gameObject.alpha = 0.5;
+        gameObject.setActive(false);
+        this.temporaryGameObjects.push(gameObject);
       }
       // Note: pointer.buttons == 2 is not checked here. The reason is that
       // pointer.buttons will be the last button pressed. E.g., if button 2 is pressed, released
@@ -187,7 +167,25 @@
     f2.add(this.cameraController, '_draggingCamera').listen();
     f2.add(this.railBuilder, 'building').listen();
     f2.open();
+
+    // DEBUG
+    _debugAddRail(this, NRailSegment, 320, 320);
+    _debugAddRail(this, NSRailSegment, 320, 288);
+    _debugAddRail(this, SERailSegment, 320, 256);
+    _debugAddRail(this, WRailSegment, 352, 256);
+
+    let debugLocomotive = new Locomotive(this, this.grid, 320, 320, 'N');
+    this.locomotiveGroup.add(debugLocomotive, true);
+    //
+
   }
+
+  function _debugAddRail(game, class_, x, y) {
+    let railSegment = new class_(game, x, y);
+    game.grid.set({x:x, y: y}, railSegment);
+    game.buildingGroup.add(railSegment, true);
+  }
+
 
   /**
    * Called when a building is built on top of another building.
@@ -207,6 +205,10 @@
   }
 
   function locomotiveOnBuilding(locomotive, building) {
+    if (!locomotive.active || !building.active) {
+      return;
+    }
+    //locomotive.collideWith(building);
   }
 
   function createActionSelection(game) {
@@ -217,7 +219,7 @@
       'image': 'station',
       'controller': game.stationBuilder,
     }, {
-      'image': 'train',
+      'image': 'locomotive',
       'controller': game.trainBuilder,
     }];
     let x = TILESIZE;

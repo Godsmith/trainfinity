@@ -43,3 +43,10 @@ describe('curve', () => {
     expect(grid.curve({x: 0, y: 0})).toEqual([0, 0, 32, 0]);
   });
 });
+
+describe('getPositionClosestTo', () => {
+  test('rounds to the nearest coordinates', () => {
+    let grid = new Grid();
+    expect(grid.getPositionClosestTo(31, 12)).toEqual({x: 32, y: 0});
+  });
+});

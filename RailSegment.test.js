@@ -3,11 +3,11 @@
  */
 import {
   RailSegmentFactory, WRailSegment, ERailSegment, WERailSegment,
-  SRailSegment, NRailSegment, NSRailSegment
+  SRailSegment, NRailSegment, NSRailSegment, NWRailSegment
 } from "./RailSegment.js";
 
 test('Two horizontal positions', () => {
-  let factory = new RailSegmentFactory();
+  let factory = new RailSegmentFactory(this);
   let [first, second] = factory.fromPositionList([
     {x: 0, y: 0},
     {x: 1, y: 0}]);
@@ -35,4 +35,17 @@ test('Three vertical positions', () => {
   expect(first).toBeInstanceOf(SRailSegment);
   expect(second).toBeInstanceOf(NSRailSegment);
   expect(third).toBeInstanceOf(NRailSegment);
+});
+
+describe('newDirection', () => {
+  test('when not specified, continue in the same direction', () => {
+    let railSegment = new NWRailSegment();
+    expect(railSegment.newDirection('N')).toEqual('N');
+  });
+
+  test('a rail segment with a turn', () => {
+    let railSegment = new NWRailSegment();
+    expect(railSegment.newDirection('E')).toEqual('N');
+    expect(railSegment.newDirection('S')).toEqual('W');
+  });
 });

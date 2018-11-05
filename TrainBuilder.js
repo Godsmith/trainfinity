@@ -8,29 +8,33 @@
  */
 
 import {ActionController} from "./ActionController.js"
-
-class Train {
-  constructor() {
-    this.imageName = 'train';
-    // TODO: should not always be 0 here
-    this.angle = 0;
-  }
-}
+import {Locomotive} from "./Locomotive.js"
 
 class TrainBuilder extends ActionController {
-  constructor(grid, physicsGroup) {
-    super(grid, physicsGroup);
+  constructor(grid, physicsGroup, scene) {
+    super(grid, physicsGroup, scene);
   }
 
   _positionsToMarkInvalid() {
     return this.positions.filter((x) => !this.grid.hasRail(x));
   }
 
-  _createBuildingSegments() {
-    this.buildingSegments = this.positions.map(() => new Train());
+  _createGameObjects() {
+    this.gameObjects = this.positions.map(position => new Locomotive(this._scene, this.grid,
+      position.x, position.y, this._direction()));
   }
 
   _writeToGrid(position, building) {
+  }
+
+  _direction() {
+    let firstPosition = this.positions[0];
+    let lastPosition = this.positions[this.positions.length - 1];
+    if (firstPosition.x == lastPosition.x) {
+      return firstPosition.y < lastPosition.y ? 'N' : 'S';
+    } else {
+      return firstPosition.x < lastPosition.x ? 'W' : 'E';
+    }
   }
 }
 

@@ -5,11 +5,18 @@
 import {Image} from "./Image.js";
 
 class ActionController {
-  constructor(grid, physicsGroup) {
+  /**
+   * Creates a new instance of this class
+   * @param grid Stores rails and buildings for easy access
+   * @param physicsGroup Where the GameObjects will be created
+   * @param scene Needed for creating GameObjects
+   */
+  constructor(grid, physicsGroup, scene) {
+    this._scene = scene;
     this.grid = grid;
-    this.physicsGroup = physicsGroup;  // The group which created physics objects are added to
+    this.physicsGroup = physicsGroup;
     this.building = false;
-    this.buildingSegments = [];
+    this.gameObjects = [];
     this.positions = [];
     this.allowBuilding = true;
     this.startX = null;
@@ -25,7 +32,7 @@ class ActionController {
   /**
    * Called each time the pointer moves and returns the rail Image objects created
    * @param position an object with an x and y value representing the current location of the cursor
-   * @returns {Array} an array of Image objects representing rail pieces.
+   * @returns {Array} an array of GameObjects that will be placed in the scene.
    */
   pointerMove(position) {
     if (!this.building) {
@@ -37,28 +44,23 @@ class ActionController {
       return [];
     }
 
-    let images = [];
     this.allowBuilding = true;
-    this._createBuildingSegments();
-    for (let i = 0; i < this.buildingSegments.length; i++) {
-      let position = this.positions[i];
-      images.push(new Image(position.x, position.y, this.buildingSegments[i].imageName,
-        this.buildingSegments[i].angle, 0xFFFFFF))
-    }
+    this._createGameObjects();
+    let images = this.gameObjects;
     for (let position of this._positionsToMarkInvalid(this.positions)) {
-      images.push(new Image(position.x, position.y, 'red', 0, 0xFFFFFF));
+      images.push(new Image(this._scene, position.x, position.y, 'red'));
       this.allowBuilding = false;
     }
     return images;
   }
 
   /**
-   * Create and store this.buildingSegments which are the objects that will be created
+   * Create and store this.gameObjects which are the objects that will be created
    * by the controller
    * @private
    */
   /* istanbul ignore next */
-  _createBuildingSegments() {
+  _createGameObjects() {
     throw new Error('Not implemented');
   }
 
@@ -83,7 +85,7 @@ class ActionController {
     if (this.allowBuilding) {
       for (let i = 0; i < this.positions.length; i++) {
         let position = this.positions[i];
-        this._writeToGrid(position, this.buildingSegments[i])
+        this._writeToGrid(position, this.gameObjects[i])
       }
       return true;
     }

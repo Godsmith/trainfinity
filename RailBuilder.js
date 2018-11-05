@@ -6,8 +6,8 @@ import {Image} from "./Image.js";
 import {ActionController} from "./ActionController.js"
 
 class RailBuilder extends ActionController{
-  constructor(grid, physicsGroup) {
-    super(grid, physicsGroup);
+  constructor(grid, physicsGroup, scene) {
+    super(grid, physicsGroup, scene);
     this.invalidPositions = [];
   }
 
@@ -16,14 +16,14 @@ class RailBuilder extends ActionController{
     return this.invalidPositions;
   }
 
-  _createBuildingSegments() {
+  _createGameObjects() {
     this.invalidPositions = [];
-    this.buildingSegments = (new RailSegmentFactory()).fromPositionList(this.positions);
-    for (let i = 0; i < this.buildingSegments.length; i++) {
+    this.gameObjects = (new RailSegmentFactory(this._scene)).fromPositionList(this.positions);
+    for (let i = 0; i < this.gameObjects.length; i++) {
       let position = this.positions[i];
       let existingBuilding = this.grid.get(position);
-      if (this.buildingSegments[i].canBuildOn(existingBuilding)) {
-        this.buildingSegments[i] = this.buildingSegments[i].combine(existingBuilding);
+      if (this.gameObjects[i].canBuildOn(existingBuilding)) {
+        this.gameObjects[i] = this.gameObjects[i].combine(existingBuilding);
       } else {
         this.invalidPositions.push(position);
       }

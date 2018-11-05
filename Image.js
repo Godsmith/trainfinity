@@ -1,12 +1,11 @@
 /**
  * Created by Filip on 2018-07-26.
  */
-class Image {
-  constructor(x, y, name, angle) {
+class Image extends Phaser.GameObjects.Sprite {
+  constructor(scene, x, y, texture) {
+    super(scene, x, y, texture);
     this.x = x;
     this.y = y;
-    this.name = name;
-    this.angle = angle;
   }
 }
 

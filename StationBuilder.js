@@ -4,16 +4,15 @@
 
 import {ActionController} from "./ActionController.js"
 
-class Station {
-  constructor() {
-    this.imageName = 'station';
-    this.angle = 0;
+class Station extends Phaser.GameObjects.Sprite {
+  constructor(scene, x, y, texture, frame) {
+    super(scene, x, y, 'station', frame);
   }
 }
 
 class StationBuilder extends ActionController {
-  constructor(grid, physicsGroup) {
-    super(grid, physicsGroup);
+  constructor(grid, physicsGroup, scene) {
+    super(grid, physicsGroup, scene);
   }
 
   _positionsToMarkInvalid() {
@@ -33,8 +32,8 @@ class StationBuilder extends ActionController {
     return Array.from(new Set(invalidPositions));
   }
 
-  _createBuildingSegments() {
-    this.buildingSegments = this.positions.map(() => new Station());
+  _createGameObjects() {
+    this.gameObjects = this.positions.map(position => new Station(this._scene, position.x, position.y));
   }
 }
 

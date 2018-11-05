@@ -38,7 +38,15 @@ class Grid {
   }
 
   get(position) {
+    // TODO: throw or return null object if there is no building at position
     return this._buildings['x' + position.x + 'y' + position.y]
+  }
+
+  getPositionClosestTo(x, y) {
+    let roundToNearestTile = x => this.tileSize * Math.round(x/this.tileSize);
+    let roundedX = roundToNearestTile(x);
+    let roundedY = roundToNearestTile(y);
+    return {x: roundedX, y: roundedY};
   }
 
   hasBuilding(position) {
@@ -55,18 +63,6 @@ class Grid {
 
   count() {
     return Object.keys(this._buildings).length;
-  }
-
-  /**
-   * Get all stations that can be reached from the selected rail
-   * @param position
-   * @returns an array of positions where the connected stations are.
-   */
-  connectedStationPositions(position) {
-    if (!hasRail(position)) {
-      return [];
-    }
-
   }
 
   /**
