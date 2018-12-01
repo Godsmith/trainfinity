@@ -23,6 +23,8 @@
   let GRID_MIN_Y = -200;
   let GRID_MAX_X = 1000;
   let GRID_MAX_Y = 1000;
+  let FACTORIES = 2;
+  let MINES = 2;
 
   let config = {
     type: Phaser.AUTO,
@@ -54,6 +56,8 @@
     this.load.image('red', 'assets/red.png');
     this.load.image('locomotive', 'assets/locomotive.png')
     this.load.image('wagon', 'assets/wagon.png')
+    this.load.image('mine', 'assets/mine.png')
+    this.load.image('factory', 'assets/factory.png')
   }
 
   class Position {
@@ -105,6 +109,9 @@
     this.selectedActionController = this.railBuilder;
 
     createActionSelection(this);
+
+    createFactories(this);
+    createMines(this);
 
     this.input.on('pointerdown', function (pointer) {
       if (pointer.buttons == 1) {
@@ -183,7 +190,7 @@
 
   function _debugAddRail(game, class_, x, y) {
     let railSegment = new class_(game, x, y);
-    game.grid.set({x:x, y: y}, railSegment);
+    game.grid.set({x: x, y: y}, railSegment);
     game.buildingGroup.add(railSegment, true);
   }
 
@@ -235,6 +242,29 @@
       });
       x += TILESIZE;
     }
+  }
+
+  function createFactories(game) {
+    createBuildings(game, 'factory', FACTORIES)
+  }
+
+  function createMines(game) {
+    createBuildings(game, 'mine', MINES)
+  }
+
+  function createBuildings(game, name, count) {
+    let roundToNearestTile = x => TILESIZE * Math.round(x / TILESIZE);
+    for (let i = 0; i < count; i++) {
+      let x = roundToNearestTile(Phaser.Math.RND.between(GRID_MIN_X, GRID_MAX_X))
+      let y = roundToNearestTile(Phaser.Math.RND.between(GRID_MIN_Y, GRID_MAX_Y))
+      createBuilding(game, name, x, y)
+    }
+  }
+
+  function createBuilding(game, name, x, y) {
+    let building = new Building(game, x + TILESIZE/2, y + TILESIZE/2, name);
+    game.add.existing(building);
+    game.grid.set({x, y}, building)
   }
 
 

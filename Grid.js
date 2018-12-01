@@ -34,7 +34,12 @@ class Grid {
   }
 
   set(position, building) {
-    this._buildings['x' + position.x + 'y' + position.y] = building
+    //this._buildings['x' + position.x + 'y' + position.y] = building
+    for (let dx = 0; dx < building.width; dx += this.tileSize) {
+       for (let dy = 0; dy < building.height; dy += this.tileSize) {
+         this._buildings['x' + (position.x + dx) + 'y' + (position.y + dy)] = building
+       }
+    }
   }
 
   get(position) {

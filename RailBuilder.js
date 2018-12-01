@@ -22,6 +22,7 @@ class RailBuilder extends ActionController{
     for (let i = 0; i < this.gameObjects.length; i++) {
       let position = this.positions[i];
       let existingBuilding = this.grid.get(position);
+      console.log(existingBuilding)
       if (this.gameObjects[i].canBuildOn(existingBuilding)) {
         this.gameObjects[i] = this.gameObjects[i].combine(existingBuilding);
       } else {
