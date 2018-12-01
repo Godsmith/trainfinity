@@ -19,6 +19,7 @@ class Locomotive extends Phaser.GameObjects.Sprite {
     this.previousY = y;
     this.direction = direction;
     this._setAngle();
+    this.depth = 1;
 
     this._addPathOfCurrentRail();
   }

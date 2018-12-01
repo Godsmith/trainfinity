@@ -11,6 +11,7 @@ class Wagon extends Phaser.GameObjects.Sprite {
     this._setDirectionToLeaderDirection();
     this.previousX = x;
     this.previousY = y;
+    this.depth = 1;
   }
 
   _setDirectionToLeaderDirection() {

@@ -15,6 +15,7 @@
   import  {CameraController}  from "./CameraController.js";
   import  {Locomotive}  from "./Locomotive.js";
   import  {NSRailSegment, SERailSegment, WRailSegment, NRailSegment} from "./RailSegment.js"
+  import  {Water} from "./Water.js"
 
   let WIDTH = 800;
   let HEIGHT = 640;
@@ -58,6 +59,7 @@
     this.load.image('wagon', 'assets/wagon.png')
     this.load.image('mine', 'assets/mine.png')
     this.load.image('factory', 'assets/factory.png')
+    this.load.image('water', 'assets/water.png')
   }
 
   class Position {
@@ -110,6 +112,7 @@
 
     createActionSelection(this);
 
+    createWater(this);
     createFactories(this);
     createMines(this);
 
@@ -261,8 +264,25 @@
     }
   }
 
+  function createWater(game) {
+    let baseWaterProbability = 0.03;
+    let increasedProbabilityPerNeighbor = 0.45;
+    let roundToNearestTile = x => TILESIZE * Math.round(x / TILESIZE);
+    for (let x = roundToNearestTile(GRID_MIN_X); x < GRID_MAX_X; x += TILESIZE) {
+      for (let y = roundToNearestTile(GRID_MIN_Y); y < GRID_MAX_Y; y += TILESIZE) {
+        let probability = baseWaterProbability +
+            increasedProbabilityPerNeighbor * game.grid.countAdjacentWater({x: x, y: y});
+        if (Phaser.Math.RND.frac() < probability) {
+          let building = new Water(game, x, y);
+          game.add.existing(building);
+          game.grid.set({x, y}, building)
+        }
+      }
+    }
+  }
+
   function createBuilding(game, name, x, y) {
-    let building = new Building(game, x + TILESIZE/2, y + TILESIZE/2, name);
+    let building = new Building(game, x + TILESIZE / 2, y + TILESIZE / 2, name);
     game.add.existing(building);
     game.grid.set({x, y}, building)
   }

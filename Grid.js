@@ -4,6 +4,7 @@
 
 import {RailSegment} from "./RailSegment.js"
 import {Station} from "./StationBuilder.js"
+import {Water} from "./Water.js"
 
 class Grid {
   constructor(tileSize = 32) {
@@ -64,6 +65,14 @@ class Grid {
 
   hasStation(position) {
     return this.get(position) instanceof Station;
+  }
+
+  hasWater(position) {
+    return this.get(position) instanceof Water;
+  }
+
+  countAdjacentWater(position) {
+    return this.adjacent(position).filter(x => this.hasWater(x)).length
   }
 
   count() {
