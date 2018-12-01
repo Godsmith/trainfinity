@@ -9,6 +9,7 @@
 
 import {ActionController} from "./ActionController.js"
 import {Locomotive} from "./Locomotive.js"
+import {Wagon} from "./Wagon.js"
 
 class TrainBuilder extends ActionController {
   constructor(grid, physicsGroup, scene) {
@@ -20,8 +21,15 @@ class TrainBuilder extends ActionController {
   }
 
   _createGameObjects() {
-    this.gameObjects = this.positions.map(position => new Locomotive(this._scene, this.grid,
-      position.x, position.y, this._direction()));
+    let locomotivePosition = this.positions[0];
+    let wagonPositions = this.positions.slice(1);
+    let leader = new Locomotive(this._scene, this.grid, locomotivePosition.x, locomotivePosition.y, this._direction());
+    this.gameObjects = [leader];
+    for (let position of wagonPositions) {
+      let wagon = new Wagon(this._scene, this.grid, position.x, position.y, leader);
+      this.gameObjects.push(wagon);
+      leader = wagon
+    }
   }
 
   _writeToGrid(position, building) {
