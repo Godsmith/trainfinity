@@ -33,16 +33,20 @@ class Wagon extends Phaser.GameObjects.Sprite {
     super.preUpdate(time, delta);
 
     let distanceToLeader = this._distanceToLeader();
-    if (distanceToLeader < TILESIZE) {
-      return;
-    }
-    this._goForward(distanceToLeader - TILESIZE);
 
-    let newDistanceToLeader = this._distanceToLeader();
+    if (this._leaderFarAway()) {
+      this._goForward(distanceToLeader - TILESIZE);
 
-    if (newDistanceToLeader > distanceToLeader) {
-      this._setDirectionToLeaderDirection()
+      let newDistanceToLeader = this._distanceToLeader();
+
+      if (newDistanceToLeader > distanceToLeader) {
+        this._setDirectionToLeaderDirection()
+      }
     }
+  }
+
+  _leaderFarAway() {
+    return this._distanceToLeader() > TILESIZE;
   }
 
   _goForward(distance) {
