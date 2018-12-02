@@ -3,7 +3,7 @@
  */
 
 import {Grid} from "./Grid.js";
-import {WERailSegment} from "./RailSegment.js"
+import {RailSegment} from "./RailSegment.js"
 import {Water} from "./world/Water.js"
 
 test('Adjacent positions', () => {
@@ -20,15 +20,15 @@ test('Adjacent positions', () => {
 describe('ConnectedRailPositions', () => {
   test('Single rail segment', () => {
     let grid = new Grid();
-    grid.set({x:0, y: 0}, new WERailSegment());
+    grid.set({x:0, y: 0}, new RailSegment(null, null, null, ['W', 'E']));
     let connected_segments = 1;
 
     expect(grid._connectedRailPositions({x: 0, y: 0}).length).toEqual(connected_segments);
   });
   test('Two adjacent rail segments', () => {
     let grid = new Grid();
-    grid.set({x:0, y: 0}, new WERailSegment());
-    grid.set({x:32, y: 0}, new WERailSegment());
+    grid.set({x:0, y: 0}, new RailSegment(null, null, null, ['W', 'E']));
+    grid.set({x:32, y: 0}, new RailSegment(null, null, null, ['W', 'E']));
     let connected_segments = 2;
 
     expect(grid._connectedRailPositions({x: 0, y: 0}).length).toEqual(connected_segments);
@@ -38,8 +38,8 @@ describe('ConnectedRailPositions', () => {
 describe('curve', () => {
   test('Two adjacent rail segments', () => {
     let grid = new Grid();
-    grid.set({x:0, y: 0}, new WERailSegment());
-    grid.set({x:32, y: 0}, new WERailSegment());
+    grid.set({x:0, y: 0}, new RailSegment(null, null, null, ['W', 'E']));
+    grid.set({x:32, y: 0}, new RailSegment(null, null, null, ['W', 'E']));
 
     expect(grid.curve({x: 0, y: 0})).toEqual([0, 0, 32, 0]);
   });

@@ -14,7 +14,7 @@
   import  {TrainBuilder}  from "./TrainBuilder.js";
   import  {CameraController}  from "./CameraController.js";
   import  {Locomotive}  from "./Locomotive.js";
-  import  {NSRailSegment, SERailSegment, WRailSegment, NRailSegment} from "./RailSegment.js"
+  import  {RailSegment} from "./RailSegment.js"
   import  {Water} from "./world/Water.js"
   import  {Creator} from "./world/Creator.js"
   import * as constants from "./world/constants.js"
@@ -169,10 +169,10 @@
     f2.open();
 
     // DEBUG
-    _debugAddRail(this, NRailSegment, 320, 320);
-    _debugAddRail(this, NSRailSegment, 320, 288);
-    _debugAddRail(this, SERailSegment, 320, 256);
-    _debugAddRail(this, WRailSegment, 352, 256);
+    _debugAddRail(this, RailSegment, 320, 320, ['N']);
+    _debugAddRail(this, RailSegment, 320, 288, ['N', 'S']);
+    _debugAddRail(this, RailSegment, 320, 256, ['S', 'E']);
+    _debugAddRail(this, RailSegment, 352, 256, ['W']);
 
     let debugLocomotive = new Locomotive(this, this.grid, 320, 320, 'N');
     this.locomotiveGroup.add(debugLocomotive, true);
@@ -180,8 +180,8 @@
 
   }
 
-  function _debugAddRail(game, class_, x, y) {
-    let railSegment = new class_(game, x, y);
+  function _debugAddRail(game, class_, x, y, directions) {
+    let railSegment = new class_(game, x, y, directions);
     game.grid.set({x: x, y: y}, railSegment);
     game.buildingGroup.add(railSegment, true);
   }

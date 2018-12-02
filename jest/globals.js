@@ -13,6 +13,9 @@ class MockedSprite {
     this.x = x;
     this.y = y;
   }
+  setTexture(texture) {
+    this.texture = texture;
+  }
 }
 global.Phaser.GameObjects.Sprite = MockedSprite;
 

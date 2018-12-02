@@ -3,8 +3,8 @@
  */
 import {Grid}  from "./Grid.js";
 import {RailBuilder} from "./RailBuilder.js";
-import {ERailSegment, WRailSegment, NRailSegment, NSRailSegment, SRailSegment, SERailSegment,
-  NWRailSegment, NERailSegment, SWRailSegment} from "./RailSegment.js";
+import {Water} from "./world/Water.js";
+
 
 test('Build horizontal rail with length 2', () => {
   let grid = new Grid();
@@ -14,20 +14,22 @@ test('Build horizontal rail with length 2', () => {
   builder.pointerMove({x: 32, y: 0});
   builder.pointerUp();
 
-  expect(builder.grid.get({x: 0, y: 0})).toBeInstanceOf(ERailSegment);
-  expect(builder.grid.get({x: 32, y: 0})).toBeInstanceOf(WRailSegment);
+  expect(grid.hasRail({x: 0, y: 0}));
+  expect(grid.hasRail({x: 32, y: 0}));
+  expect(grid.get({x: 0, y: 0}).directions).toEqual(new Set(['E']));
+  expect(grid.get({x: 32, y: 0}).directions).toEqual(new Set(['W']));
 });
 
 test('Build horizontal rail with length 2 in the other direction', () => {
   let grid = new Grid();
   let builder = new RailBuilder(grid);
 
-  builder.pointerDown({x: 32, y: 0});
-  builder.pointerMove({x: 0, y: 0});
+  builder.pointerDown({x: 0, y: 0});
+  builder.pointerMove({x: 32, y: 0});
   builder.pointerUp();
 
-  expect(builder.grid.get({x: 0, y: 0})).toBeInstanceOf(ERailSegment);
-  expect(builder.grid.get({x: 32, y: 0})).toBeInstanceOf(WRailSegment);
+  expect(grid.get({x: 0, y: 0}).directions).toEqual(new Set(['E']));
+  expect(grid.get({x: 32, y: 0}).directions).toEqual(new Set(['W']));
 });
 
 test('Build vertical rail with length 3', () => {
@@ -38,9 +40,9 @@ test('Build vertical rail with length 3', () => {
   builder.pointerMove({x: 0, y: 64});
   builder.pointerUp();
 
-  expect(builder.grid.get({x: 0, y: 0})).toBeInstanceOf(SRailSegment);
-  expect(builder.grid.get({x: 0, y: 32})).toBeInstanceOf(NSRailSegment);
-  expect(builder.grid.get({x: 0, y: 64})).toBeInstanceOf(NRailSegment);
+  expect(grid.get({x: 0, y: 0}).directions).toEqual(new Set(['S']));
+  expect(grid.get({x: 0, y: 32}).directions).toEqual(new Set(['N', 'S']));
+  expect(grid.get({x: 0, y: 64}).directions).toEqual(new Set(['N']));
 });
 
 test('Build vertical rail with length 3 in the other direction', () => {
@@ -51,9 +53,9 @@ test('Build vertical rail with length 3 in the other direction', () => {
   builder.pointerMove({x: 0, y: 0});
   builder.pointerUp();
 
-  expect(builder.grid.get({x: 0, y: 0})).toBeInstanceOf(SRailSegment);
-  expect(builder.grid.get({x: 0, y: 32})).toBeInstanceOf(NSRailSegment);
-  expect(builder.grid.get({x: 0, y: 64})).toBeInstanceOf(NRailSegment);
+  expect(grid.get({x: 0, y: 0}).directions).toEqual(new Set(['S']));
+  expect(grid.get({x: 0, y: 32}).directions).toEqual(new Set(['N', 'S']));
+  expect(grid.get({x: 0, y: 64}).directions).toEqual(new Set(['N']));
 });
 
 test('Clicking without moving to another square does nothing', () => {
@@ -94,14 +96,15 @@ test('Build circle', () => {
   builder.pointerMove({x: 0, y: 0});
   builder.pointerUp();
 
-  expect(builder.grid.get({x: 0, y: 0})).toBeInstanceOf(SERailSegment);
-  expect(builder.grid.get({x: 0, y: 32})).toBeInstanceOf(NERailSegment);
-  expect(builder.grid.get({x: 32, y: 0})).toBeInstanceOf(SWRailSegment);
-  expect(builder.grid.get({x: 32, y: 32})).toBeInstanceOf(NWRailSegment);
+  expect(builder.grid.get({x: 0, y: 0}).directions).toEqual(new Set(['S', 'E']));
+  expect(builder.grid.get({x: 0, y: 32}).directions).toEqual(new Set(['N', 'E']));
+  expect(builder.grid.get({x: 32, y: 0}).directions).toEqual(new Set(['S', 'W']));
+  expect(builder.grid.get({x: 32, y: 32}).directions).toEqual(new Set(['N', 'W']));
 });
 
-test('Invalid build (T-intersection)', () => {
+test('Building on water is not permitted', () => {
   let grid = new Grid();
+  grid.set({x: 32, y: 32}, new Water());
   let builder = new RailBuilder(grid);
 
   builder.pointerDown({x: 0, y: 0});
@@ -112,5 +115,5 @@ test('Invalid build (T-intersection)', () => {
   builder.pointerMove({x: 32, y: 32});
   builder.pointerUp();
 
-  expect(builder.grid.count()).toEqual(3);
+  expect(builder.grid.count()).toEqual(3 + 1);
 });

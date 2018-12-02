@@ -4,11 +4,11 @@
 
 import {Grid}  from "./Grid.js";
 import {Locomotive} from "./Locomotive.js"
-import {NSRailSegment} from "./RailSegment.js"
+import {RailSegment} from "./RailSegment.js"
 
 
 let grid = new Grid();
-grid.set({x: 0, y: 0}, new NSRailSegment());
+grid.set({x: 0, y: 0}, new RailSegment(null, null, null, ['N', 'S']));
 let locomotive;
 
 beforeEach(() => {

@@ -9,8 +9,8 @@ import {NSRailSegment, RailSegment} from "./RailSegment.js"
 
 test('After train is built on rail, the rail persists', () => {
   let grid = new Grid();
-  grid.set({x: 0, y: 0}, new NSRailSegment());
-  grid.set({x: 0, y: 32}, new NSRailSegment());
+  grid.set({x: 0, y: 0}, new RailSegment(null, null, null, ['N', 'S']));
+  grid.set({x: 0, y: 32}, new RailSegment(null, null, null, ['N', 'S']));
   let builder = new TrainBuilder(grid, null, mockedScene);
 
   builder.pointerDown({x: 0, y: 0});
@@ -23,8 +23,8 @@ test('After train is built on rail, the rail persists', () => {
 
 describe('The direction of the train', () => {
   let grid = new Grid();
-  grid.set({x: 0, y: 0}, new NSRailSegment());
-  grid.set({x: 0, y: 32}, new NSRailSegment());
+  grid.set({x: 0, y: 0}, new RailSegment(null, null, null, ['N', 'S']));
+  grid.set({x: 0, y: 32}, new RailSegment(null, null, null, ['N', 'S']));
   let builder = new TrainBuilder(grid, null, mockedScene);
 
   test('is north when dragging downwards', () => {
@@ -37,8 +37,8 @@ describe('The direction of the train', () => {
 
   test('is south when dragging upwards', () => {
     let grid = new Grid();
-    grid.set({x: 0, y: 0}, new NSRailSegment());
-    grid.set({x: 0, y: 32}, new NSRailSegment());
+    grid.set({x: 0, y: 0}, new RailSegment(null, null, null, ['N', 'S']));
+    grid.set({x: 0, y: 32}, new RailSegment(null, null, null, ['N', 'S']));
     let builder = new TrainBuilder(grid, null, mockedScene);
 
     builder.pointerDown({x: 0, y: 32});
@@ -49,8 +49,8 @@ describe('The direction of the train', () => {
 
   test('is west when dragging to the right', () => {
     let grid = new Grid();
-    grid.set({x: 0, y: 0}, new NSRailSegment());
-    grid.set({x: 32, y: 0}, new NSRailSegment());
+    grid.set({x: 0, y: 0}, new RailSegment(null, null, null, ['N', 'S']));
+    grid.set({x: 32, y: 0}, new RailSegment(null, null, null, ['N', 'S']));
     let builder = new TrainBuilder(grid, null, mockedScene);
 
     builder.pointerDown({x: 0, y: 0});
@@ -61,8 +61,8 @@ describe('The direction of the train', () => {
 
   test('is east when dragging to the left', () => {
     let grid = new Grid();
-    grid.set({x: 0, y: 0}, new NSRailSegment());
-    grid.set({x: 32, y: 0}, new NSRailSegment());
+    grid.set({x: 0, y: 0}, new RailSegment(null, null, null, ['N', 'S']));
+    grid.set({x: 32, y: 0}, new RailSegment(null, null, null, ['N', 'S']));
     let builder = new TrainBuilder(grid, null, mockedScene);
 
     builder.pointerDown({x: 32, y: 0});

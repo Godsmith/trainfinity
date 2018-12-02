@@ -6,22 +6,44 @@
 
 const downwardsOrLeftwards = Symbol('downwardsOrLeftwards');
 
+let OPPOSITES = {'N': 'S', 'S': 'N', 'E': 'W', 'W': 'E'};
+let CONNECTED_POSITIONS = {
+  'N': {x: 0, y: -1},
+  'S': {x: 0, y: 1},
+  'W': {x: -1, y: 0},
+  'E': {x: 1, y: 0}
+};
+
 class RailSegment extends Phaser.GameObjects.Sprite {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, texture, frame);
+  /**
+   *
+   * @param scene
+   * @param x
+   * @param y
+   * @param directions Set of directions the rail goes in, e.g. Set(['N', 'S']) for a rail going north-south
+   */
+  constructor(scene, x, y, directions) {
+    // TODO: change from halfrail later
+    super(scene, x, y, 'halfrail');
+    this.directions = new Set(directions);
+    if (this.directions.size == 0) {
+      throw new Error('No directions passed to RailSegment')
+    }
     this.angle = 0;
     this.possibleCombinations = {};
     this.stationAllowed = {N: false, E: false, S: false, W: false};
     this._newDirections = {N: 'N', E: 'E', S: 'S', W: 'W'};
     this._connectedAdjacentPositionDeltas = [];
+    this._updateGraphics()
   }
 
-  canBuildOn(railSegment) {
-    if (railSegment) {
-      return railSegment.constructor.name in this.possibleCombinations;
-    } else {
-      return true;
+  canBuildOn(building) {
+    // TODO: Currently can build on undefined and null. Should probably change this so that
+    // Grid returns some kind of null object from get()
+    if (!building) {
+      return true
     }
+    return building instanceof RailSegment;
   }
 
   /**
@@ -33,8 +55,11 @@ class RailSegment extends Phaser.GameObjects.Sprite {
     if (!railSegment) {
       return this;
     }
-    let railSegmentClass = this.possibleCombinations[railSegment.constructor.name];
-    return new railSegmentClass(this.scene, this.x, this.y);
+    for (let direction of railSegment.directions) {
+      this.directions.add(direction)
+    }
+    this._updateGraphics();
+    return this;
   }
 
   /**
@@ -43,161 +68,83 @@ class RailSegment extends Phaser.GameObjects.Sprite {
    * @return an array of position modifications, e.g. [{x: -1, y: 0}, {x: 1: y: 0}]
    */
   connectedAdjacentPositions() {
-    return this._connectedAdjacentPositionDeltas;
+    return Array.from(this.directions).map(direction => CONNECTED_POSITIONS[direction]);
   }
 
   newDirection(direction) {
-    if (!this._newDirections[direction]) {
-      return direction
+    if (this.directions.size == 1) {
+      return this.directions.values().next().value
     }
-    return this._newDirections[direction]
+    let directionsExceptReverse = new Set(this.directions);
+    directionsExceptReverse.delete(OPPOSITES[direction]);
+    // Later, do not return an arbitrary direction here
+    return directionsExceptReverse.values().next().value;
   }
-}
 
-class NRailSegment extends RailSegment {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, 'halfrail', frame);
-    this.angle = 0;
-    this.possibleCombinations = {
-      ERailSegment: NERailSegment,
-      WRailSegment: NWRailSegment,
-      SRailSegment: NSRailSegment
-    };
-    this.stationAllowed['E'] = this.stationAllowed['W'] = true;
-    this._connectedAdjacentPositionDeltas = [{x: 0, y: -1}];
-    this._newDirections = {'S': 'N'}
-  }
-}
-class ERailSegment extends RailSegment {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, 'halfrail', frame);
-    this.angle = 90;
-    this.possibleCombinations = {
-      NRailSegment: NERailSegment,
-      SRailSegment: SERailSegment,
-      WRailSegment: WERailSegment
-    };
-    this.stationAllowed['N'] = this.stationAllowed['S'] = true;
-    this._connectedAdjacentPositionDeltas = [{x: 1, y: 0}];
-    this._newDirections = {'W': 'E'}
-  }
-}
-class SRailSegment extends RailSegment {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, 'halfrail', frame);
-    this.angle = 180;
-    this.possibleCombinations = {
-      ERailSegment: SERailSegment,
-      WRailSegment: SWRailSegment,
-      NRailSegment: NSRailSegment
-    };
-    this.stationAllowed['E'] = this.stationAllowed['W'] = true;
-    this._connectedAdjacentPositionDeltas = [{x: 0, y: 1}];
-    this._newDirections = {'N': 'S'}
-  }
-}
-class WRailSegment extends RailSegment {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, 'halfrail', frame);
-    this.angle = 270;
-    this.possibleCombinations = {
-      NRailSegment: NWRailSegment,
-      SRailSegment: SWRailSegment,
-      ERailSegment: WERailSegment
-    };
-    this.stationAllowed['N'] = this.stationAllowed['S'] = true;
-    this._connectedAdjacentPositionDeltas = [{x: -1, y: 0}];
-    this._newDirections = {'E': 'W'}
-  }
-}
-
-class NSRailSegment extends RailSegment {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, 'rail', frame);
-    this.angle = 0;
-    this.stationAllowed['E'] = this.stationAllowed['W'] = true;
-    this._connectedAdjacentPositionDeltas = [{x: 0, y: -1}, {x: 0, y: 1}];
-  }
-}
-
-class WERailSegment extends RailSegment {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, 'rail', frame);
-    this.angle = 90;
-    this.stationAllowed['N'] = this.stationAllowed['S'] = true;
-    this._connectedAdjacentPositionDeltas = [{x: -1, y: 0}, {x: 1, y: 0}];
-  }
-}
-
-class NERailSegment extends RailSegment {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, 'railturn', frame);
-    this.angle = 0;
-    this._connectedAdjacentPositionDeltas = [{x: 0, y: -1}, {x: 1, y: 0}];
-    this._newDirections = {'S': 'E', 'W': 'N'}
-  }
-}
-
-class SERailSegment extends RailSegment {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, 'railturn', frame);
-    this.angle = 90;
-    this._connectedAdjacentPositionDeltas = [{x: 0, y: 1}, {x: 1, y: 0}];
-    this._newDirections = {'N': 'E', 'W': 'S'}
-  }
-}
-
-class SWRailSegment extends RailSegment {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, 'railturn', frame);
-    this.angle = 180;
-    this._connectedAdjacentPositionDeltas = [{x: 0, y: 1}, {x: -1, y: 0}];
-    this._newDirections = {'N': 'W', 'E': 'S'}
-  }
-}
-
-class NWRailSegment extends RailSegment {
-  constructor(scene, x, y, texture, frame) {
-    super(scene, x, y, 'railturn', frame);
-    this.angle = 270;
-    this._connectedAdjacentPositionDeltas = [{x: 0, y: -1}, {x: -1, y: 0}];
-    this._newDirections = {'S': 'W', 'E': 'N'}
+  _updateGraphics() {
+    // TODO: Now > 2 is handled equal to = 2, the former should have unique textures
+    let areSetsEqual = (a, b) => a.size === b.size && [...a].every(value => b.has(value));
+    if (this.directions.size == 1) {
+      this.setTexture('halfrail');
+      let direction = this.directions.values().next().value;
+      let angleFromDirection = {'N': 0, 'E': 90, 'S': 180, 'W': 270};
+      this.angle = angleFromDirection[direction];
+    } else if (areSetsEqual(this.directions, new Set(['N', 'S']))) {
+      this.setTexture('rail');
+      this.angle = 0;
+    } else if (areSetsEqual(this.directions, new Set(['W', 'E']))) {
+      this.setTexture('rail');
+      this.angle = 90;
+    } else if (this.directions.has('N') && this.directions.has('E')) {
+      this.setTexture('railturn');
+      this.angle = 0;
+    } else if (this.directions.has('E') && this.directions.has('S')) {
+      this.setTexture('railturn');
+      this.angle = 90;
+    } else if (this.directions.has('S') && this.directions.has('W')) {
+      this.setTexture('railturn');
+      this.angle = 180;
+    } else if (this.directions.has('W') && this.directions.has('N')) {
+      this.setTexture('railturn');
+      this.angle = 270;
+    }
   }
 }
 
 class RailSegmentFactory {
 
-  constructor (scene) {
+  constructor(scene) {
     this._scene = scene;
   }
 
   fromPositionList(positions) {
     let horizontal = (positions[0].y === positions[positions.length - 1].y);
-    let classes = {};
+
+    let directions = {};
     if (horizontal) {
-      classes.first = ERailSegment;
-      classes.middle = WERailSegment;
-      classes.last = WRailSegment;
+      directions.first = ['E'];
+      directions.middle = ['W', 'E'];
+      directions.last = ['W'];
     } else {
-      classes.first = NRailSegment;
-      classes.middle = NSRailSegment;
-      classes.last = SRailSegment;
+      directions.first = ['N'];
+      directions.middle = ['N', 'S'];
+      directions.last = ['S'];
     }
 
-    let classArray = [];
-    classArray.push(classes.first);
+    let directionArray = [];
+    directionArray.push(new Set(directions.first));
     for (let i = 0; i < positions.length - 2; i++) {
-      classArray.push(classes.middle);
+      directionArray.push(new Set(directions.middle));
     }
-    classArray.push(classes.last);
+    directionArray.push(new Set(directions.last));
 
     if (this[downwardsOrLeftwards](positions)) {
-      classArray.reverse()
+      directionArray.reverse()
     }
 
     let railSegments = [];
     for (let i = 0; i < positions.length; i++) {
-      railSegments.push(new classArray[i](this._scene, positions[i].x, positions[i].y))
+      railSegments.push(new RailSegment(this._scene, positions[i].x, positions[i].y, directionArray[i]))
     }
 
     return railSegments;
@@ -210,7 +157,4 @@ class RailSegmentFactory {
   }
 }
 
-export {
-  RailSegment, RailSegmentFactory, WRailSegment, ERailSegment, WERailSegment,
-  SRailSegment, NRailSegment, NSRailSegment, SERailSegment, NERailSegment, SWRailSegment, NWRailSegment
-};
+export {RailSegment, RailSegmentFactory};

@@ -22,6 +22,7 @@ class RailBuilder extends ActionController{
     for (let i = 0; i < this.gameObjects.length; i++) {
       let position = this.positions[i];
       let existingBuilding = this.grid.get(position);
+      // TODO: Why is there no error raised when trying to build on another type of building?
       if (this.gameObjects[i].canBuildOn(existingBuilding)) {
         this.gameObjects[i] = this.gameObjects[i].combine(existingBuilding);
       } else {

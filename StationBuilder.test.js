@@ -3,12 +3,12 @@
  */
 import {Grid}  from "./Grid.js";
 import {StationBuilder, Station} from "./StationBuilder.js";
-import {NSRailSegment, WERailSegment} from "./RailSegment.js"
+import {RailSegment} from "./RailSegment.js"
 
 test('Build horizontal station with length 2 adjacent to rail', () => {
   let grid = new Grid();
-  grid.set({x:0, y: 32}, new NSRailSegment());
-  grid.set({x:32, y: 32}, new NSRailSegment());
+  grid.set({x:0, y: 32}, new RailSegment(null, null, null, ['N', 'S']));
+  grid.set({x:32, y: 32}, new RailSegment(null, null, null, ['N', 'S']));
   let builder = new StationBuilder(grid);
 
   builder.pointerDown({x: 0, y: 0});
@@ -23,7 +23,7 @@ describe('PositionsToMarkInvalid', () => {
   test('Disallow overlapping existing rail or station', () => {
     let grid = new Grid();
     grid.set({x:0, y: 0}, new Station());
-    grid.set({x:0, y: 32}, new NSRailSegment());
+    grid.set({x:0, y: 32}, new RailSegment(null, null, null, ['N', 'S']));
     let builder = new StationBuilder(grid);
     builder.positions = [{x: 0, y: 0}, {x: 0, y: 32}];
 
@@ -40,8 +40,8 @@ describe('PositionsToMarkInvalid', () => {
     let grid = new Grid();
     grid.set({x:0, y: 0}, new Station());
     grid.set({x:32, y: 0}, new Station());
-    grid.set({x:0, y: 64}, new WERailSegment());
-    grid.set({x:32, y: 64}, new WERailSegment());
+    grid.set({x:0, y: 64}, new RailSegment(null, null, null, ['W', 'E']));
+    grid.set({x:32, y: 64}, new RailSegment(null, null, null, ['W', 'E']));
     let builder = new StationBuilder(grid);
     builder.positions = [{x: 0, y: 32}, {x: 32, y: 32}];
 
