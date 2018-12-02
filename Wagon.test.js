@@ -12,7 +12,7 @@ let wagon;
 
 beforeEach(() => {
   locomotive = new Locomotive(mockedScene, grid, 0, 0, 'N');
-  wagon = new Wagon(mockedScene, grid, 0, 32, locomotive)
+  wagon = new Wagon(mockedScene, 0, 32, locomotive)
 });
 
 describe('preUpdate', () => {

@@ -5,9 +5,8 @@ import {TILESIZE} from "./world/constants.js"
 
 class Wagon extends Phaser.GameObjects.Sprite {
 
-  constructor(scene, grid, x, y, leader) {
+  constructor(scene, x, y, leader) {
     super(scene, x, y, 'wagon');
-    this._grid = grid;
     this._leader = leader;
     this._setDirectionToLeaderDirection();
     this.previousX = x;

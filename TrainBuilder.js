@@ -26,7 +26,7 @@ class TrainBuilder extends ActionController {
     let leader = new Locomotive(this._scene, this.grid, locomotivePosition.x, locomotivePosition.y, this._direction());
     this.gameObjects = [leader];
     for (let position of wagonPositions) {
-      let wagon = new Wagon(this._scene, this.grid, position.x, position.y, leader);
+      let wagon = new Wagon(this._scene, position.x, position.y, leader);
       this.gameObjects.push(wagon);
       leader = wagon
     }
