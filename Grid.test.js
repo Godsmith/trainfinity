@@ -4,7 +4,7 @@
 
 import {Grid} from "./Grid.js";
 import {WERailSegment} from "./RailSegment.js"
-import {Water} from "./Water.js"
+import {Water} from "./world/Water.js"
 
 test('Adjacent positions', () => {
   let grid = new Grid();

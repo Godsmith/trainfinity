@@ -4,7 +4,7 @@
 
 import {RailSegment} from "./RailSegment.js"
 import {Station} from "./StationBuilder.js"
-import {Water} from "./Water.js"
+import {Water} from "./world/Water.js"
 
 class Grid {
   constructor(tileSize = 32) {
