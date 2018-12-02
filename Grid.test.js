@@ -4,6 +4,7 @@
 
 import {Grid} from "./Grid.js";
 import {WERailSegment} from "./RailSegment.js"
+import {Water} from "./Water.js"
 
 test('Adjacent positions', () => {
   let grid = new Grid();
@@ -49,4 +50,14 @@ describe('getPositionClosestTo', () => {
     let grid = new Grid();
     expect(grid.getPositionClosestTo(31, 12)).toEqual({x: 32, y: 0});
   });
+});
+
+test('countAdjacentWater', () => {
+  let grid = new Grid();
+  grid.set({x:32, y: 0}, new Water());
+  grid.set({x:-32, y: 0}, new Water());
+  grid.set({x:0, y: 32}, new Water());
+  grid.set({x:0, y: -32}, new Water());
+  expect(grid.countAdjacentWater({x: 0, y:0})).toEqual(4)
+
 });

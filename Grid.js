@@ -34,10 +34,21 @@ class Grid {
     return this.adjacent(position).some(this.hasStation.bind(this));
   }
 
+  /**
+   * Sets a building to occupy certain positions in the grid, starting in the top left corner.
+   *
+   * This can lead to one building occupying multiple positions.
+   *
+   * If the building does not have a height or width property, assume it only occupies one position.
+   *
+   * @param position The position in the upper left corner of the building.
+   * @param building The building; probably some kind of Sprite.
+   */
   set(position, building) {
-    //this._buildings['x' + position.x + 'y' + position.y] = building
-    for (let dx = 0; dx < building.width; dx += this.tileSize) {
-       for (let dy = 0; dy < building.height; dy += this.tileSize) {
+    let width = building.width || this.tileSize;
+    let height = building.height || this.tileSize;
+    for (let dx = 0; dx < width; dx += this.tileSize) {
+       for (let dy = 0; dy < height; dy += this.tileSize) {
          this._buildings['x' + (position.x + dx) + 'y' + (position.y + dy)] = building
        }
     }
@@ -90,10 +101,10 @@ class Grid {
    */
   _connectedRailPositions(position, positions=[]) {
     if (this._isPositionInArray(position, positions)) {
-      return;
+      return [];
     }
     if (!this.hasRail(position)) {
-      return;
+      return [];
     }
     positions.push(position);
     let rail = this.get(position);
