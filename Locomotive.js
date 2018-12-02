@@ -7,10 +7,12 @@ import {TILESIZE} from "./world/constants.js"
 /** Class representing a locomotive */
 class Locomotive extends Phaser.GameObjects.Sprite {
   /**
-   * Create a locomotive. Arguments are the same as for the parent class.
+   * Create a locomotive.
    * @param scene
+   * @param grid
    * @param x
    * @param y
+   * @param The direction the locomotive is heading, e.g. "N"
    */
   constructor(scene, grid, x, y, direction) {
     super(scene, x, y, 'locomotive');
