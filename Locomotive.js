@@ -67,6 +67,11 @@ class Locomotive extends Phaser.GameObjects.Sprite {
     //console.log(this._direction());
     let newDirection = railSegment.newDirection(this.direction);
     //console.log(newDirection);
+
+    //correct the current position since we might have overshot a bit
+    this.x = position.x;
+    this.y = position.y;
+
     this._addPath(newDirection);
 
   }
