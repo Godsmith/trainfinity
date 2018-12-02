@@ -1,6 +1,7 @@
 /**
  * Created by Filip on 2018-12-01.
  */
+import {TILESIZE} from "./world/constants.js"
 
 class Wagon extends Phaser.GameObjects.Sprite {
 
@@ -11,7 +12,7 @@ class Wagon extends Phaser.GameObjects.Sprite {
     this._setDirectionToLeaderDirection();
     this.previousX = x;
     this.previousY = y;
-    this.depth = 1;
+    this.depth = 1;  // Display this on top of rail, which has depth 0
   }
 
   _setDirectionToLeaderDirection() {
@@ -33,10 +34,10 @@ class Wagon extends Phaser.GameObjects.Sprite {
     super.preUpdate(time, delta);
 
     let distanceToLeader = this._distanceToLeader();
-    if (distanceToLeader < this._grid.tileSize) {
+    if (distanceToLeader < TILESIZE) {
       return;
     }
-    this._goForward(distanceToLeader - this._grid.tileSize);
+    this._goForward(distanceToLeader - TILESIZE);
 
     let newDistanceToLeader = this._distanceToLeader();
 

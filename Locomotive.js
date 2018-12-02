@@ -1,6 +1,9 @@
 /**
  * Created by Filip on 2018-11-05.
  */
+
+import {TILESIZE} from "./world/constants.js"
+
 /** Class representing a locomotive */
 class Locomotive extends Phaser.GameObjects.Sprite {
   /**
@@ -67,12 +70,11 @@ class Locomotive extends Phaser.GameObjects.Sprite {
   }
 
   _addPath(direction) {
-    let tileSize = this.grid.tileSize;
     let deltas = {
-      N: {dx: 0, dy: -tileSize},
-      S: {dx: 0, dy: tileSize},
-      W: {dx: -tileSize, dy: 0},
-      E: {dx: tileSize, dy: 0}
+      N: {dx: 0, dy: -TILESIZE},
+      S: {dx: 0, dy: TILESIZE},
+      W: {dx: -TILESIZE, dy: 0},
+      E: {dx: TILESIZE, dy: 0}
     };
     let delta = deltas[direction];
     if (!delta) {

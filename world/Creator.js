@@ -11,7 +11,7 @@ class Creator {
     console.log(game);
     this._game = game;
     // TODO: move this to constants
-    this._tileSize = game.grid.tileSize
+    this._tileSize = constants.TILESIZE
   }
 
   create() {

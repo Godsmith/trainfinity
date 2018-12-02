@@ -3,6 +3,7 @@
  */
 
 import {Image} from "./Image.js";
+import {TILESIZE} from "./world/constants.js"
 
 class ActionController {
   /**
@@ -38,7 +39,7 @@ class ActionController {
     if (!this.building) {
       return [];
     }
-    this.positions = this._positionsFromStartTo(position, this.grid.tileSize);
+    this.positions = this._positionsFromStartTo(position, TILESIZE);
     if (this.positions.length < 2) {
       this.allowBuilding = false;
       return [];

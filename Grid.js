@@ -5,10 +5,10 @@
 import {RailSegment} from "./RailSegment.js"
 import {Station} from "./StationBuilder.js"
 import {Water} from "./world/Water.js"
+import * as constants from "./world/constants.js"
 
 class Grid {
-  constructor(tileSize = 32) {
-    this.tileSize = tileSize;
+  constructor() {
     this._buildings = {};
   }
 
@@ -19,10 +19,10 @@ class Grid {
    */
   adjacent(position) {
     return [
-      {x: position.x, y: position.y - this.tileSize},
-      {x: position.x, y: position.y + this.tileSize},
-      {x: position.x - this.tileSize, y: position.y},
-      {x: position.x + this.tileSize, y: position.y},
+      {x: position.x, y: position.y - constants.TILESIZE},
+      {x: position.x, y: position.y + constants.TILESIZE},
+      {x: position.x - constants.TILESIZE, y: position.y},
+      {x: position.x + constants.TILESIZE, y: position.y},
     ];
   }
 
@@ -45,10 +45,10 @@ class Grid {
    * @param building The building; probably some kind of Sprite.
    */
   set(position, building) {
-    let width = building.width || this.tileSize;
-    let height = building.height || this.tileSize;
-    for (let dx = 0; dx < width; dx += this.tileSize) {
-       for (let dy = 0; dy < height; dy += this.tileSize) {
+    let width = building.width || constants.TILESIZE;
+    let height = building.height || constants.TILESIZE;
+    for (let dx = 0; dx < width; dx += constants.TILESIZE) {
+       for (let dy = 0; dy < height; dy += constants.TILESIZE) {
          this._buildings['x' + (position.x + dx) + 'y' + (position.y + dy)] = building
        }
     }
@@ -60,7 +60,7 @@ class Grid {
   }
 
   getPositionClosestTo(x, y) {
-    let roundToNearestTile = x => this.tileSize * Math.round(x/this.tileSize);
+    let roundToNearestTile = x => constants.TILESIZE * Math.round(x/constants.TILESIZE);
     let roundedX = roundToNearestTile(x);
     let roundedY = roundToNearestTile(y);
     return {x: roundedX, y: roundedY};
@@ -133,8 +133,8 @@ class Grid {
    */
   _position_plus_delta(position, delta_position) {
     return {
-      x: position.x + delta_position.x * this.tileSize,
-      y: position.y + delta_position.y * this.tileSize
+      x: position.x + delta_position.x * constants.TILESIZE,
+      y: position.y + delta_position.y * constants.TILESIZE
     }
   }
 
